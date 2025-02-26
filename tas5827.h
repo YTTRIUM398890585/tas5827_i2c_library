@@ -51,3 +51,20 @@ const uint8_t REG_PIN_CONTROL2      = 0x75;
 const uint8_t REG_MISC_CONTROL3     = 0x76;
 const uint8_t REG_CBC_CONTROL       = 0x77;
 const uint8_t REG_FAULT_CLEAR       = 0x78;
+
+class TAS5827
+{
+public:
+
+	TAS5827(void);
+	~TAS5827(void);
+
+	bool begin(uint8_t address, uint8_t DUMMY_I2C_HANDLE);
+
+private:
+	uint8_t address;
+	uint8_t i2cHandler;
+
+	bool writeRegister(uint8_t reg, uint8_t value);
+	bool readRegister(uint8_t reg, uint8_t* p_value);
+};
