@@ -214,6 +214,34 @@ bool TAS5827::getGPIOSel(GPIO_Sel_t* p_gpio_sel_0, GPIO_Sel_t* p_gpio_sel_1, GPI
 	return true;
 }
 
+/**
+ * @brief get the power state
+ *
+ * @param p_powState pointer to return the power state
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getPowState(PowerState_t* p_powState)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_FAULT_CLEAR, &reg)) {
+		*p_powState = static_cast<PowerState_t>(reg & 0x03);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool TAS5827::getChanFault(uint8_t* p_chanFault) { }
+
+bool TAS5827::getGlobalFault1(uint8_t* p_globalFault1) { }
+
+bool TAS5827::getGlobalFault2(uint8_t* p_globalFault2) { }
+
+bool TAS5827::getWarning(uint8_t* p_warning) { }
+
 /* ------------------------------------------------------------ */
 /* Private Helpers                                              */
 /* ------------------------------------------------------------ */
