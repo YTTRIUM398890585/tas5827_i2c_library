@@ -349,6 +349,28 @@ bool TAS5827::getPowState(Power_State_t* p_powState)
 }
 
 /**
+ * @brief get the auto mute state
+ *
+ * @param p_chan_1_mute pointer to return the channel 1 mute state
+ * @param p_chan_2_mute pointer to return the channel 2 mute state
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getAutoMuteState(bool* p_chan_1_mute, bool* p_chan_2_mute)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_AUTOMUTE_STATE, &reg)) {
+		*p_chan_1_mute = static_cast<bool>(reg & 0x01);
+		*p_chan_2_mute = static_cast<bool>(reg & 0x02);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
  * @brief get the channel fault
  *
  * @param p_chanFault pointer to return the channel fault
