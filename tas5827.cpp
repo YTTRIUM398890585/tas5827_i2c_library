@@ -87,6 +87,86 @@ bool TAS5827::setGPIOSel(GPIO_Sel_t gpio_mode_0, GPIO_Sel_t gpio_mode_1, GPIO_Se
 		return false;
 	return true;
 }
+
+/**
+ * @brief set the GPIOs inversion setting
+ *
+ * @param gpio_inv_0 GPIO 0 inversion, true for inverted
+ * @param gpio_inv_1 GPIO 1 inversion, true for inverted
+ * @param gpio_inv_2 GPIO 2 inversion, true for inverted
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setMiscCtrl2(bool gpio_inv_0, bool gpio_inv_1, bool gpio_inv_2)
+{
+	uint8_t miscCtrl2 = 0;
+
+	miscCtrl2 |= gpio_inv_2 ? 1 << 2 : 0;
+	miscCtrl2 |= gpio_inv_1 ? 1 << 1 : 0;
+	miscCtrl2 |= gpio_inv_0 ? 1 << 0 : 0;
+
+	return writeRegister(REG_MISC_CTRL2, miscCtrl2);
+}
+
+/**
+ * @brief set the pin control 1
+ *
+ * @param pinCtrl1 value to write
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setPinCtrl1(uint8_t pinCtrl1)
+{
+	return writeRegister(REG_PIN_CONTROL1, pinCtrl1);
+}
+
+/**
+ * @brief set the pin control 2
+ *
+ * @param pinCtrl2 value to write
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setPinCtrl2(uint8_t pinCtrl2)
+{
+	return writeRegister(REG_PIN_CONTROL2, pinCtrl2);
+}
+
+/**
+ * @brief set the miscellaneous control 3
+ *
+ * @param miscCtrl3 value to write
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setMiscCtrl3(uint8_t miscCtrl3)
+{
+	miscCtrl3 = miscCtrl3 & 0x90;
+	return writeRegister(REG_MISC_CONTROL3, miscCtrl3);
+}
+
+/**
+ * @brief set the CBC control
+ *
+ * @param level_sel Cycle-By-Cycle current limiting level, percentage of the Over-Current Threshold:
+ * @param cbc_en CBC enable
+ * @param cbc_warn_en CBC warning enable
+ * @param cbc_fault_en CBC fault enable
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setCBCCtrl(CBC_Sel_t level_sel, bool cbc_en, bool cbc_warn_en, bool cbc_fault_en)
+{
+	uint8_t cbcCtrl = 0;
+
+	cbcCtrl |= (static_cast<uint8_t>(level_sel) & 0x03) << 3;
+	cbcCtrl |= cbc_en ? 1 << 2 : 0;
+	cbcCtrl |= cbc_warn_en ? 1 << 1 : 0;
+	cbcCtrl |= cbc_fault_en ? 1 << 0 : 0;
+
+	return writeRegister(REG_CBC_CONTROL, cbcCtrl);
+}
+
 /**
  * @brief clear the analog fault
  *
@@ -225,6 +305,30 @@ bool TAS5827::getGPIOSel(GPIO_Sel_t* p_gpio_sel_0, GPIO_Sel_t* p_gpio_sel_1, GPI
 }
 
 /**
+ * @brief get the GPIOs inversion setting
+ *
+ * @param p_gpio_inv_0 pointer to GPIO 0 inversion to return, true for inverted
+ * @param p_gpio_inv_1 pointer to GPIO 1 inversion to return, true for inverted
+ * @param p_gpio_inv_2 pointer to GPIO 2 inversion to return, true for inverted
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getMiscCtrl2(bool* p_gpio_inv_0, bool* p_gpio_inv_1, bool* p_gpio_inv_2)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_MISC_CTRL2, &reg)) {
+		*p_gpio_inv_0 = static_cast<bool>(reg & 0x01);
+		*p_gpio_inv_1 = static_cast<bool>(reg & 0x02);
+		*p_gpio_inv_2 = static_cast<bool>(reg & 0x04);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
  * @brief get the power state
  *
  * @param p_powState pointer to return the power state
@@ -317,6 +421,89 @@ bool TAS5827::getWarning(uint8_t* p_warning)
 
 	if (readRegister(REG_WARNING, &reg)) {
 		*p_warning = reg & 0x07;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the pin control 1
+ *
+ * @param p_pinCtrl1 pointer to return the pin control 1
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getPinCtrl1(uint8_t* p_pinCtrl1)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_PIN_CONTROL1, &reg)) {
+		*p_pinCtrl1 = reg;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the pin control 2
+ *
+ * @param p_pinCtrl2 pointer to return the pin control 2
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getPinCtrl2(uint8_t* p_pinCtrl2)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_PIN_CONTROL2, &reg)) {
+		*p_pinCtrl2 = reg;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the miscellaneous control 3
+ *
+ * @param p_miscCtrl3 pointer to return the miscellaneous control 3
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getMiscCtrl3(uint8_t* p_miscCtrl3)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_MISC_CONTROL3, &reg)) {
+		*p_miscCtrl3 = reg & 0x90;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the CBC control
+ *
+ * @param p_cbcCtrl3 pointer to return the CBC control
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getCbcCtrl(CBC_Sel_t* p_level_sel, bool* p_cbc_en, bool* p_cbc_warn_en, bool* p_cbc_fault_en)
+{
+	uint8_t cbcCtrl = 0;
+
+	if (readRegister(REG_CBC_CONTROL, &cbcCtrl)) {
+		*p_level_sel    = static_cast<CBC_Sel_t>((cbcCtrl & 0x18) >> 3);
+		*p_cbc_en       = static_cast<bool>(cbcCtrl & 0x04);
+		*p_cbc_warn_en  = static_cast<bool>(cbcCtrl & 0x02);
+		*p_cbc_fault_en = static_cast<bool>(cbcCtrl & 0x01);
 		return true;
 	}
 	else {

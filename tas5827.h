@@ -39,6 +39,13 @@ public:
 		PLAY       = 0b11,
 	};
 
+	enum class CBC_Sel_t : uint8_t
+	{
+		CBC_80_PERCENT = 0b00,
+		CBC_60_PERCENT = 0b10,
+		CBC_40_PERCENT = 0b01,
+	};
+
 	/* Fault Masks */
 	// CHAN_FAULT
 	const uint8_t MASK_CHAN_FAULT_CH1DC = 1 << 3;
@@ -66,6 +73,30 @@ public:
 	const uint8_t MASK_WARNING_OTW2    = 1 << 1;
 	const uint8_t MASK_WARNING_OTW1    = 1 << 0;
 
+	// PIN_CONTROL1
+	const uint8_t MASK_PIN_CTRL1_OTSD     = 1 << 7;
+	const uint8_t MASK_PIN_CTRL1_DVDDUV   = 1 << 6;
+	const uint8_t MASK_PIN_CTRL1_DVDDOV   = 1 << 5;
+	const uint8_t MASK_PIN_CTRL1_CLKERROR = 1 << 4;
+	const uint8_t MASK_PIN_CTRL1_PVDDUV   = 1 << 3;
+	const uint8_t MASK_PIN_CTRL1_PVDDOV   = 1 << 2;
+	const uint8_t MASK_PIN_CTRL1_DC       = 1 << 1;
+	const uint8_t MASK_PIN_CTRL1_OC       = 1 << 0;
+
+	// PIN_CONTROL2
+	const uint8_t EN_PIN_CTRL2_CBCFAULTLATCH = 1 << 7;
+	const uint8_t EN_PIN_CTRL2_CBCWARNLATCH  = 1 << 6;
+	const uint8_t EN_PIN_CTRL2_CLKFAULTLATCH = 1 << 5;
+	const uint8_t EN_PIN_CTRL2_OTSDLATCH     = 1 << 4;
+	const uint8_t EN_PIN_CTRL2_OTWLATCH      = 1 << 3;
+	const uint8_t MASK_PIN_CTRL2_OTW         = 1 << 2;
+	const uint8_t MASK_PIN_CTRL2_CBCWARN     = 1 << 1;
+	const uint8_t MASK_PIN_CTRL2_CBCFAULT    = 1 << 0;
+
+	// MISC_CONTROL3
+	const uint8_t EN_CLKDET_LATCH = 1 << 7;
+	const uint8_t EN_OTSD_AUTOREC = 1 << 4;
+
 	TAS5827();
 	~TAS5827();
 
@@ -76,18 +107,30 @@ public:
 	bool setAnalogGain(uint8_t gain);
 	bool setGPIOMode(GPIO_Mode_t gpio_mode_0, GPIO_Mode_t gpio_mode_1, GPIO_Mode_t gpio_mode_2);
 	bool setGPIOSel(GPIO_Sel_t gpio_sel_0, GPIO_Sel_t gpio_sel_1, GPIO_Sel_t gpio_sel_2);
+	bool setMiscCtrl2(bool gpio_inv_0, bool gpio_inv_1, bool gpio_inv_2);
+	bool setPinCtrl1(uint8_t pinCtrl1);
+	bool setPinCtrl2(uint8_t pinCtrl2);
+	bool setMiscCtrl3(uint8_t miscCtrl3);
+	bool setCBCCtrl(CBC_Sel_t level_sel, bool cbc_en, bool cbc_warn_en, bool cbc_fault_en);
 	bool setFaultClear(void);
+
 	/* Getters */
 	bool getLoopBW(Loop_BW_t* p_loopBW);
 	bool getAnalogGain(float* p_gain);
 	bool getPVDD(float* p_pvdd);
 	bool getGPIOMode(GPIO_Mode_t* p_gpio_mode_0, GPIO_Mode_t* p_gpio_mode_1, GPIO_Mode_t* p_gpio_mode_2);
 	bool getGPIOSel(GPIO_Sel_t* p_gpio_sel_0, GPIO_Sel_t* p_gpio_sel_1, GPIO_Sel_t* p_gpio_sel_2);
+	bool getMiscCtrl2(bool* p_gpio_inv_0, bool* p_gpio_inv_1, bool* p_gpio_inv_2);
 	bool getPowState(Power_State_t* p_powState);
 	bool getChanFault(uint8_t* p_chanFault);
 	bool getGlobalFault1(uint8_t* p_globalFault1);
 	bool getGlobalFault2(uint8_t* p_globalFault2);
 	bool getWarning(uint8_t* p_warning);
+	bool getPinCtrl1(uint8_t* p_pinCtrl1);
+	bool getPinCtrl2(uint8_t* p_pinCtrl2);
+	bool getMiscCtrl3(uint8_t* p_miscCtrl3);
+	bool getCbcCtrl(CBC_Sel_t* p_level_sel, bool* p_cbc_en, bool* p_cbc_warn_en, bool* p_cbc_fault_en);
+
 private:
 	uint8_t address;
 	uint8_t i2cHandler;
