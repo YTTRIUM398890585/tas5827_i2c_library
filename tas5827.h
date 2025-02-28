@@ -40,6 +40,7 @@ public:
 	bool setAnalogGain(uint8_t gain);
 	bool setGPIOMode(GPIO_Mode_t gpio_mode_0, GPIO_Mode_t gpio_mode_1, GPIO_Mode_t gpio_mode_2);
 	bool setGPIOSel(GPIO_Sel_t gpio_sel_0, GPIO_Sel_t gpio_sel_1, GPIO_Sel_t gpio_sel_2);
+	bool setFaultClear(void);
 	/* Getters */
 	bool getLoopBW(Loop_BW_t* p_loopBW);
 	bool getAnalogGain(float* p_gain);

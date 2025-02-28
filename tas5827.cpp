@@ -87,6 +87,16 @@ bool TAS5827::setGPIOSel(GPIO_Sel_t gpio_mode_0, GPIO_Sel_t gpio_mode_1, GPIO_Se
 		return false;
 	return true;
 }
+/**
+ * @brief clear the analog fault
+ *
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setFaultClear(void)
+{
+	return writeRegister(REG_FAULT_CLEAR, 0x80);
+}
 
 /* ------------------------------------------------------------ */
 /* Getters                                                      */
