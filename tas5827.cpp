@@ -28,7 +28,7 @@ bool TAS5827::begin(uint8_t address, uint8_t DUMMY_I2C_HANDLE)
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::setLoopBW(LoopBW_t loopBW)
+bool TAS5827::setLoopBW(Loop_BW_t loopBW)
 {
 	// PHASE_CTL here is always set to 0 = out of phase, since it is not used
 	// only one TAS5827 is used
@@ -95,16 +95,16 @@ bool TAS5827::setGPIOSel(GPIO_Sel_t gpio_mode_0, GPIO_Sel_t gpio_mode_1, GPIO_Se
 /**
  * @brief get the loop bandwidth
  *
- * @param p_loopBW pointer to return the loop bandwidth in enum LoopBW_t
+ * @param p_loopBW pointer to return the loop bandwidth in enum Loop_BW_t
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::getLoopBW(LoopBW_t* p_loopBW)
+bool TAS5827::getLoopBW(Loop_BW_t* p_loopBW)
 {
 	uint8_t reg;
 
 	if (readRegister(REG_ANA_CTRL, &reg)) {
-		*p_loopBW = static_cast<LoopBW_t>(reg & 0x60);
+		*p_loopBW = static_cast<Loop_BW_t>(reg & 0x60);
 		return true;
 	}
 	else {

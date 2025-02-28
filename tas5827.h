@@ -3,6 +3,54 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+class TAS5827
+{
+public:
+	/* Enums */
+	enum class Loop_BW_t : uint8_t
+	{
+		LOOP_BW_80KHZ  = 0b00100000,
+		LOOP_BW_100kHZ = 0b00000000,
+		LOOP_BW_120kHZ = 0b01000000,
+		LOOP_BW_175kHZ = 0b01100000,
+	};
+
+	enum class GPIO_Mode_t : uint8_t
+	{
+		INPUT  = 0b0,
+		OUTPUT = 0b1,
+	};
+
+	enum class GPIO_Sel_t : uint8_t
+	{
+		OFF       = 0b0000,
+		WARNZ     = 0b1000,
+		FAULTZ    = 0b1011,
+		PVDD_DROP = 0b1100,
+		SDOUT     = 0b1101,
+		RAMP_CLK  = 0b1110,
+	};
+	TAS5827();
+	~TAS5827();
+
+	bool begin(uint8_t address, uint8_t DUMMY_I2C_HANDLE);
+
+	/* Setters */
+	bool setLoopBW(Loop_BW_t loopBW);
+	bool setAnalogGain(uint8_t gain);
+	bool setGPIOMode(GPIO_Mode_t gpio_mode_0, GPIO_Mode_t gpio_mode_1, GPIO_Mode_t gpio_mode_2);
+	bool setGPIOSel(GPIO_Sel_t gpio_sel_0, GPIO_Sel_t gpio_sel_1, GPIO_Sel_t gpio_sel_2);
+	/* Getters */
+	bool getLoopBW(Loop_BW_t* p_loopBW);
+	bool getAnalogGain(float* p_gain);
+	bool getPVDD(float* p_pvdd);
+	bool getGPIOMode(GPIO_Mode_t* p_gpio_mode_0, GPIO_Mode_t* p_gpio_mode_1, GPIO_Mode_t* p_gpio_mode_2);
+	bool getGPIOSel(GPIO_Sel_t* p_gpio_sel_0, GPIO_Sel_t* p_gpio_sel_1, GPIO_Sel_t* p_gpio_sel_2);
+private:
+	uint8_t address;
+	uint8_t i2cHandler;
+
+	/* Registers */
 const uint8_t REG_RESET_CTRL        = 0x01;
 const uint8_t REG_DEVICE_CTRL1      = 0x02;
 const uint8_t REG_DEVICE_CTRL2      = 0x03;
@@ -51,56 +99,6 @@ const uint8_t REG_PIN_CONTROL2      = 0x75;
 const uint8_t REG_MISC_CONTROL3     = 0x76;
 const uint8_t REG_CBC_CONTROL       = 0x77;
 const uint8_t REG_FAULT_CLEAR       = 0x78;
-
-class TAS5827
-{
-public:
-	/* Enums */
-	enum class LoopBW_t : uint8_t
-	{
-		LOOP_BW_80KHZ  = 0b00100000,
-		LOOP_BW_100kHZ = 0b00000000,
-		LOOP_BW_120kHZ = 0b01000000,
-		LOOP_BW_175kHZ = 0b01100000,
-	};
-
-	enum class GPIO_Mode_t : uint8_t
-	{
-		INPUT  = 0b0,
-		OUTPUT = 0b1,
-	};
-
-	enum class GPIO_Sel_t : uint8_t
-	{
-		OFF       = 0b0000,
-		WARNZ     = 0b1000,
-		FAULTZ    = 0b1011,
-		PVDD_DROP = 0b1100,
-		SDOUT     = 0b1101,
-		RAMP_CLK  = 0b1110,
-	};
-
-	TAS5827(void);
-	~TAS5827(void);
-
-	bool begin(uint8_t address, uint8_t DUMMY_I2C_HANDLE);
-
-	/* Setters */
-	bool setLoopBW(LoopBW_t loopBW);
-	bool setAnalogGain(uint8_t gain);
-	bool setGPIOMode(GPIO_Mode_t gpio_mode_0, GPIO_Mode_t gpio_mode_1, GPIO_Mode_t gpio_mode_2);
-	bool setGPIOSel(GPIO_Sel_t gpio_sel_0, GPIO_Sel_t gpio_sel_1, GPIO_Sel_t gpio_sel_2);
-
-	/* Getters */
-	bool getLoopBW(LoopBW_t* p_loopBW);
-	bool getAnalogGain(float* p_gain);
-	bool getPVDD(float* p_pvdd);
-	bool getGPIOMode(GPIO_Mode_t* p_gpio_mode_0, GPIO_Mode_t* p_gpio_mode_1, GPIO_Mode_t* p_gpio_mode_2);
-	bool getGPIOSel(GPIO_Sel_t* p_gpio_sel_0, GPIO_Sel_t* p_gpio_sel_1, GPIO_Sel_t* p_gpio_sel_2);
-
-private:
-	uint8_t address;
-	uint8_t i2cHandler;
 
 	bool writeRegister(uint8_t reg, uint8_t value);
 	bool readRegister(uint8_t reg, uint8_t* p_value);
