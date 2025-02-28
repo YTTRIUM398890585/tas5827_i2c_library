@@ -30,6 +30,42 @@ public:
 		SDOUT     = 0b1101,
 		RAMP_CLK  = 0b1110,
 	};
+
+	enum class Power_State_t : uint8_t
+	{
+		DEEP_SLEEP = 0b00,
+		SLEEP      = 0b01,
+		HI_Z       = 0b10,
+		PLAY       = 0b11,
+	};
+
+	/* Fault Masks */
+	// CHAN_FAULT
+	const uint8_t MASK_CHAN_FAULT_CH1DC = 1 << 3;
+	const uint8_t MASK_CHAN_FAULT_CH2DC = 1 << 2;
+	const uint8_t MASK_CHAN_FAULT_CH1OC = 1 << 1;
+	const uint8_t MASK_CHAN_FAULT_CH2OC = 1 << 0;
+
+	// GLOBAL_FAULT1
+	const uint8_t MASK_GLOBAL_FAULT1_BQ     = 1 << 6;
+	const uint8_t MASK_GLOBAL_FAULT1_EEPROM = 1 << 5;
+	const uint8_t MASK_GLOBAL_FAULT1_CLK    = 1 << 2;
+	const uint8_t MASK_GLOBAL_FAULT1_PVDDOV = 1 << 1;
+	const uint8_t MASK_GLOBAL_FAULT1_PVDDUV = 1 << 0;
+
+	// GLOBAL_FAULT2
+	const uint8_t MASK_GLOBAL_FAULT2_CH2CBC = 1 << 2;
+	const uint8_t MASK_GLOBAL_FAULT2_CH1CBC = 1 << 1;
+	const uint8_t MASK_GLOBAL_FAULT2_OTSD   = 1 << 0;
+
+	// WARNING
+	const uint8_t MASK_WARNING_CH1CBCW = 1 << 5;
+	const uint8_t MASK_WARNING_CH2CBCW = 1 << 4;
+	const uint8_t MASK_WARNING_OTW4    = 1 << 3;
+	const uint8_t MASK_WARNING_OTW3    = 1 << 2;
+	const uint8_t MASK_WARNING_OTW2    = 1 << 1;
+	const uint8_t MASK_WARNING_OTW1    = 1 << 0;
+
 	TAS5827();
 	~TAS5827();
 
@@ -47,6 +83,11 @@ public:
 	bool getPVDD(float* p_pvdd);
 	bool getGPIOMode(GPIO_Mode_t* p_gpio_mode_0, GPIO_Mode_t* p_gpio_mode_1, GPIO_Mode_t* p_gpio_mode_2);
 	bool getGPIOSel(GPIO_Sel_t* p_gpio_sel_0, GPIO_Sel_t* p_gpio_sel_1, GPIO_Sel_t* p_gpio_sel_2);
+	bool getPowState(Power_State_t* p_powState);
+	bool getChanFault(uint8_t* p_chanFault);
+	bool getGlobalFault1(uint8_t* p_globalFault1);
+	bool getGlobalFault2(uint8_t* p_globalFault2);
+	bool getWarning(uint8_t* p_warning);
 private:
 	uint8_t address;
 	uint8_t i2cHandler;

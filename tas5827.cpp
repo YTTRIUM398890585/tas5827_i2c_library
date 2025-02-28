@@ -224,6 +224,106 @@ bool TAS5827::getGPIOSel(GPIO_Sel_t* p_gpio_sel_0, GPIO_Sel_t* p_gpio_sel_1, GPI
 	return true;
 }
 
+/**
+ * @brief get the power state
+ *
+ * @param p_powState pointer to return the power state
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getPowState(Power_State_t* p_powState)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_POWER_STATE, &reg)) {
+		*p_powState = static_cast<Power_State_t>(reg & 0x03);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the channel fault
+ *
+ * @param p_chanFault pointer to return the channel fault
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getChanFault(uint8_t* p_chanFault)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_CHAN_FAULT, &reg)) {
+		*p_chanFault = reg & 0x0F;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the global fault 1
+ *
+ * @param p_globalFault1 pointer to return the global fault 1
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getGlobalFault1(uint8_t* p_globalFault1)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_GLOBAL_FAULT1, &reg)) {
+		*p_globalFault1 = reg & 0x67;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the global fault 2
+ *
+ * @param p_globalFault2 pointer to return the global fault 2
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getGlobalFault2(uint8_t* p_globalFault2)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_GLOBAL_FAULT2, &reg)) {
+		*p_globalFault2 = reg & 0x07;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the warning
+ *
+ * @param p_warning pointer to return the warning
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getWarning(uint8_t* p_warning)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_WARNING, &reg)) {
+		*p_warning = reg & 0x07;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 /* ------------------------------------------------------------ */
 /* Private Helpers                                              */
 /* ------------------------------------------------------------ */
