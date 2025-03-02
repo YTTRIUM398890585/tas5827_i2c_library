@@ -46,6 +46,48 @@ public:
 		CBC_40_PERCENT = 0b01,
 	};
 
+	enum class SS_Rand_Range_t : uint8_t
+	{
+		// For Fsw of 384kHz
+		// 3'b000: SS range +/- 0.62%
+		// 3'b010: SS range +/- 1.88%
+		// 3'b011: SS range +/- 4.38%
+		// 3'b100: SS range +/- 9.38%
+		// 3'b101: SS range +/- 19.38%
+		// For Fsw of 576kHz
+		// 3'b000: SS range +/- 0.95%
+		// 3'b010: SS range +/- 2.86%
+		// 3'b011: SS range +/- 6.67%
+		// 3'b100: SS range +/- 14.29%
+		// 3'b101: SS range +/- 29.52%
+		// not sure what the setting actuall means outside of the given example in the datasheet
+		SS_Rand_0_62  = 0b000,
+		SS_Rand_1_88  = 0b010,
+		SS_Rand_4_38  = 0b011,
+		SS_Rand_9_38  = 0b100,
+		SS_Rand_19_38 = 0b101,
+	};
+
+	enum class SS_Tri_Range_t : uint8_t
+	{
+		SS_Tri_24kHz_5  = 0b0000,
+		SS_Tri_24kHz_10 = 0b0001,
+		SS_Tri_24kHz_20 = 0b0010,
+		SS_Tri_24kHz_25 = 0b0011,
+		SS_Tri_48kHz_5  = 0b0100,
+		SS_Tri_48kHz_10 = 0b0101,
+		SS_Tri_48kHz_20 = 0b0110,
+		SS_Tri_48kHz_25 = 0b0111,
+		SS_Tri_32kHz_5  = 0b1000,
+		SS_Tri_32kHz_10 = 0b1001,
+		SS_Tri_32kHz_20 = 0b1010,
+		SS_Tri_32kHz_25 = 0b1011,
+		SS_Tri_16kHz_5  = 0b1100,
+		SS_Tri_16kHz_10 = 0b1101,
+		SS_Tri_16kHz_20 = 0b1110,
+		SS_Tri_16kHz_25 = 0b1111,
+	};
+
 	/* Fault Masks */
 	// CHAN_FAULT
 	const uint8_t MASK_CHAN_FAULT_CH1DC = 1 << 3;
@@ -108,6 +150,9 @@ public:
 	bool setGPIOMode(GPIO_Mode_t gpio_mode_0, GPIO_Mode_t gpio_mode_1, GPIO_Mode_t gpio_mode_2);
 	bool setGPIOSel(GPIO_Sel_t gpio_sel_0, GPIO_Sel_t gpio_sel_1, GPIO_Sel_t gpio_sel_2);
 	bool setMiscCtrl2(bool gpio_inv_0, bool gpio_inv_1, bool gpio_inv_2);
+	bool setDisableSpreadSpectrum(void);
+	bool setRandomSpreadSpectrum(SS_Rand_Range_t rand_range);
+	bool setTriangularSpreadSpectrum(SS_Tri_Range_t tri_range);
 	bool setPinCtrl1(uint8_t pinCtrl1);
 	bool setPinCtrl2(uint8_t pinCtrl2);
 	bool setMiscCtrl3(uint8_t miscCtrl3);
@@ -123,6 +168,9 @@ public:
 	bool getMiscCtrl2(bool* p_gpio_inv_0, bool* p_gpio_inv_1, bool* p_gpio_inv_2);
 	bool getPowState(Power_State_t* p_powState);
 	bool getAutoMuteState(bool* p_chan_1_mute, bool* p_chan_2_mute);
+	bool getSpreadSpectrumCtrl(
+		bool* p_triangular_en, bool* p_random_en, SS_Rand_Range_t* p_rand_range, SS_Tri_Range_t* p_tri_range
+	);
 	bool getChanFault(uint8_t* p_chanFault);
 	bool getGlobalFault1(uint8_t* p_globalFault1);
 	bool getGlobalFault2(uint8_t* p_globalFault2);

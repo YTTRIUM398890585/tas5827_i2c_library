@@ -109,6 +109,61 @@ bool TAS5827::setMiscCtrl2(bool gpio_inv_0, bool gpio_inv_1, bool gpio_inv_2)
 }
 
 /**
+ * @brief disable the spread spectrum
+ *
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setDisableSpreadSpectrum(void)
+{
+	return writeRegister(REG_RAMP_SS_CTRL0, 0);
+}
+
+/**
+ * @brief enable the random spread spectrum
+ *
+ * @param rand_range range of the random spread spectrum
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setRandomSpreadSpectrum(SS_Rand_Range_t rand_range)
+{
+	uint8_t spreadSpectrumCtrl0 = 0;
+	spreadSpectrumCtrl0 |= 1 << 1;
+
+	uint8_t spreadSpectrumCtrl1 = 0;
+	spreadSpectrumCtrl1 |= (static_cast<uint8_t>(rand_range) & 0x07) << 4;
+
+	if (!writeRegister(REG_RAMP_SS_CTRL0, spreadSpectrumCtrl0))
+		return false;
+	if (!writeRegister(REG_RAMP_SS_CTRL1, spreadSpectrumCtrl1))
+		return false;
+	return true;
+}
+
+/**
+ * @brief enable the triangular spread spectrum
+ *
+ * @param tri_range range of the triangular spread spectrum
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setTriangularSpreadSpectrum(SS_Tri_Range_t tri_range)
+{
+	uint8_t spreadSpectrumCtrl0 = 0;
+	spreadSpectrumCtrl0 |= 1 << 0;
+
+	uint8_t spreadSpectrumCtrl1 = 0;
+	spreadSpectrumCtrl1 |= (static_cast<uint8_t>(tri_range) & 0x0F);
+
+	if (!writeRegister(REG_RAMP_SS_CTRL0, spreadSpectrumCtrl0))
+		return false;
+	if (!writeRegister(REG_RAMP_SS_CTRL1, spreadSpectrumCtrl1))
+		return false;
+	return true;
+}
+
+/**
  * @brief set the pin control 1
  *
  * @param pinCtrl1 value to write
@@ -363,6 +418,40 @@ bool TAS5827::getAutoMuteState(bool* p_chan_1_mute, bool* p_chan_2_mute)
 	if (readRegister(REG_AUTOMUTE_STATE, &reg)) {
 		*p_chan_1_mute = static_cast<bool>(reg & 0x01);
 		*p_chan_2_mute = static_cast<bool>(reg & 0x02);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the spread spectrum control
+ *
+ * @param p_triangular_en pointer to return the triangular spread spectrum enable
+ * @param p_random_en pointer to return the random spread spectrum enable
+ * @param p_rand_range pointer to return the random spread spectrum range
+ * @param p_tri_range pointer to return the triangular spread spectrum range
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getSpreadSpectrumCtrl(
+	bool* p_triangular_en, bool* p_random_en, SS_Rand_Range_t* p_rand_range, SS_Tri_Range_t* p_tri_range
+)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_RAMP_SS_CTRL0, &reg)) {
+		*p_triangular_en = static_cast<bool>(reg & 0x01);
+		*p_random_en     = static_cast<bool>(reg & 0x02);
+	}
+	else {
+		return false;
+	}
+
+	if (readRegister(REG_RAMP_SS_CTRL1, &reg)) {
+		*p_rand_range = static_cast<SS_Rand_Range_t>((reg & 0x70) >> 4);
+		*p_tri_range  = static_cast<SS_Tri_Range_t>(reg & 0x0F);
 		return true;
 	}
 	else {
