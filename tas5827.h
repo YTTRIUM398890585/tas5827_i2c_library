@@ -7,6 +7,33 @@ class TAS5827
 {
 public:
 	/* Enums */
+	// Switching frequency
+	enum class Fsw_t : uint8_t
+	{
+		FSW_384KHZ  = 0b000,
+		FSW_480KHZ  = 0b010,
+		FSW_576KHZ  = 0b011,
+		FSW_768KHZ  = 0b100,
+		FSW_1024KHZ = 0b101,
+	};
+
+	// Modulation type
+	enum class Modulation_t : uint8_t
+	{
+		MOD_BD     = 0b00,
+		MOD_1SPW   = 0b01,
+		MOD_HYBRID = 0b10,
+	};
+
+	// Undervoltage sampling average
+	enum class UV_Avg_t : uint8_t
+	{
+		NO_AVG     = 0b00,
+		SAMPLES_16 = 0b01,
+		SAMPLES_32 = 0b10,
+		SAMPLES_64 = 0b11,
+	};
+
 	// Time of no input to auto mute a channel
 	enum class Auto_Mute_Time_t : uint8_t
 	{
