@@ -147,6 +147,9 @@ public:
 	/* Setters */
 	bool setModuleReset();
 	bool setRegisterReset();
+	bool setDevCtrl1(Fsw_t fsw, bool pbtl, Modulation_t mod);
+	bool setDevCtrl2(bool dspEn, bool ch1Mute, bool ch2Mute, Power_State_t powState);
+	bool setPvddUvCtrl(bool uvHiZEn, UV_Avg_t uvAvg, bool pvddDropDetectEn);
 	bool setLoopBW(Loop_BW_t loopBW);
 	bool setAnalogGain(uint8_t gain);
 	bool setGPIOMode(GPIO_Mode_t gpioMode0, GPIO_Mode_t gpioMode1, GPIO_Mode_t gpioMode2);
@@ -162,6 +165,9 @@ public:
 	bool setFaultClear(void);
 
 	/* Getters */
+	bool getDevCtrl1(Fsw_t* p_fsw, bool* p_pbtl, Modulation_t* p_mod);
+	bool getDevCtrl2(bool* p_dspEn, bool* p_ch1Mute, bool* p_ch2Mute, Power_State_t* p_powState);
+	bool getPvddUvCtrl(bool* p_uvHiZEn, UV_Avg_t* p_uvAvg, bool* p_pvddDropDetectEn);
 	bool getLoopBW(Loop_BW_t* p_loopBW);
 	bool getAnalogGain(float* p_gain);
 	bool getPVDD(float* p_pvdd);

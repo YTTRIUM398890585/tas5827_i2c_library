@@ -49,6 +49,70 @@ bool TAS5827::setRegisterReset()
 }
 
 /**
+ * @brief set the device control 1
+ *
+ * @param fsw switching frequency
+ * @param pbtl true - parallel bridge tied load, false - bridge tied load
+ * @param mod modulation type
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setDevCtrl1(Fsw_t fsw, bool pbtl, Modulation_t mod)
+{
+	uint8_t devCtrl1 = 0;
+
+	devCtrl1 |= (static_cast<uint8_t>(fsw) & 0x07) << 4;
+	devCtrl1 |= pbtl ? (1 << 2) : 0;
+	devCtrl1 |= static_cast<uint8_t>(mod) & 0x03;
+
+	return writeRegister(REG_DEVICE_CTRL1, devCtrl1);
+}
+
+/**
+ * @brief set the device control 2
+ *
+ * @param dspEn enables the DSP
+ * When the bit is made 0, DSP will start powering up and send out data.
+ * This needs to be made 0 only after all the input clocks are settled so that DMA channels do not go out of sync.
+ * @param ch1Mute mute channel 1 - soft mute request
+ * @param ch2Mute mute channel 2 - soft mute request
+ * @param powState power state
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setDevCtrl2(bool dspEn, bool ch1Mute, bool ch2Mute, Power_State_t powState)
+{
+	uint8_t devCtrl2 = 0;
+
+	devCtrl2 |= dspEn ? 0 : (1 << 4);
+	devCtrl2 |= ch1Mute ? (1 << 3) : 0;
+	devCtrl2 |= ch2Mute ? (1 << 2) : 0;
+	devCtrl2 |= static_cast<uint8_t>(powState) & 0x03;
+
+	return writeRegister(REG_DEVICE_CTRL2, devCtrl2);
+}
+
+/**
+ * @brief set the PVDD undervoltage control register
+ *
+ * @param uvHiZEn enable the Hi-Z mode when UVLO is detected
+ * @param uvAvg UVLO averaging type
+ * @param pvddDropDetectEn enable the PVDD drop detection
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setPvddUvCtrl(bool uvHiZEn, UV_Avg_t uvAvg, bool pvddDropDetectEn)
+{
+	uint8_t pvddUvCtrl = 0;
+
+	pvddUvCtrl |= uvHiZEn ? (1 << 3) : 0;
+	pvddUvCtrl |= (static_cast<uint8_t>(uvAvg) & 0x03) << 1;
+	pvddUvCtrl |= pvddDropDetectEn ? (1 << 0) : 0;
+
+	return writeRegister(REG_PVDD_UV_CONTROL, pvddUvCtrl);
+}
+
+/**
  * @brief set the loop bandwidth for the class D amplifier
  *
  * @param loopBW only can be 80, 100, 120 or 175 kHz
@@ -263,6 +327,81 @@ bool TAS5827::setFaultClear(void)
 /* ------------------------------------------------------------ */
 /* Getters                                                      */
 /* ------------------------------------------------------------ */
+
+/**
+ * @brief get the device control 1
+ *
+ * @param p_fsw pointer to return the switching frequency in Fsw_t
+ * @param p_pbtl pointer to return the parallel bridge tied load
+ * @param p_mod pointer to return the modulation type in Modulation_t
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getDevCtrl1(Fsw_t* p_fsw, bool* p_pbtl, Modulation_t* p_mod)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_DEVICE_CTRL1, &reg)) {
+		*p_fsw  = static_cast<Fsw_t>((reg & 0x70) >> 4);
+		*p_pbtl = static_cast<bool>(reg & 0x04);
+		*p_mod  = static_cast<Modulation_t>(reg & 0x03);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the device control 2
+ *
+ * @param p_dspEn pointer to return the DSP enable
+ * @param p_ch1Mute pointer to return the channel 1 mute state
+ * @param p_ch2Mute pointer to return the channel 2 mute state
+ * @param p_powState pointer to return the power state in Power_State_t
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getDevCtrl2(bool* p_dspEn, bool* p_ch1Mute, bool* p_ch2Mute, Power_State_t* p_powState)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_DEVICE_CTRL2, &reg)) {
+		*p_dspEn    = static_cast<bool>(reg & 0x10);
+		*p_ch1Mute  = static_cast<bool>(reg & 0x08);
+		*p_ch2Mute  = static_cast<bool>(reg & 0x04);
+		*p_powState = static_cast<Power_State_t>(reg & 0x03);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the PVDD undervoltage control register
+ *
+ * @param p_uvHiZEn pointer to return if Hi-Z mode will be entered when UVLO is detected
+ * @param p_uvAvg pointer to return the UVLO averaging type in UV_Avg_t
+ * @param p_pvddDropDetectEn pointer to return if the PVDD drop detection is enabled
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getPvddUvCtrl(bool* p_uvHiZEn, UV_Avg_t* p_uvAvg, bool* p_pvddDropDetectEn)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_PVDD_UV_CONTROL, &reg)) {
+		*p_uvHiZEn          = static_cast<bool>(reg & 0x08);
+		*p_uvAvg            = static_cast<UV_Avg_t>((reg & 0x06) >> 1);
+		*p_pvddDropDetectEn = static_cast<bool>(reg & 0x01);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 
 /**
  * @brief get the loop bandwidth
