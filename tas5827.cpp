@@ -22,6 +22,33 @@ bool TAS5827::begin(uint8_t address, uint8_t DUMMY_I2C_HANDLE)
 /* ------------------------------------------------------------ */
 
 /**
+ * @brief Reset interpolation filter and the DAC modules.
+ * Since the DSP is also reset, the coefficient RAM content will also be cleared by the DSP.
+ * This bit is auto cleared and can be set only in Hi-Z mode.
+ *
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setModuleReset()
+{
+	return writeRegister(REG_RESET_CTRL, (1 << 4));
+}
+
+/**
+ * @brief Reset mode registers back to their initial values.
+ * The RAM content is not cleared.
+ * This bit is auto cleared and must be set only when the DAC is in Hi-Z mode
+ * (resetting registers when the DAC is running is prohibited and not supported).
+ *
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setRegisterReset()
+{
+	return writeRegister(REG_RESET_CTRL, (1 << 0));
+}
+
+/**
  * @brief set the loop bandwidth for the class D amplifier
  *
  * @param loopBW only can be 80, 100, 120 or 175 kHz

@@ -145,6 +145,8 @@ public:
 	bool begin(uint8_t address, uint8_t DUMMY_I2C_HANDLE);
 
 	/* Setters */
+	bool setModuleReset();
+	bool setRegisterReset();
 	bool setLoopBW(Loop_BW_t loopBW);
 	bool setAnalogGain(uint8_t gain);
 	bool setGPIOMode(GPIO_Mode_t gpioMode0, GPIO_Mode_t gpioMode1, GPIO_Mode_t gpioMode2);
