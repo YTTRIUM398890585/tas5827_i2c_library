@@ -7,6 +7,7 @@ class TAS5827
 {
 public:
 	/* Enums */
+	// closed loop bandwidth
 	enum class Loop_BW_t : uint8_t
 	{
 		LOOP_BW_80KHZ  = 0b00100000,
@@ -15,12 +16,14 @@ public:
 		LOOP_BW_175kHZ = 0b01100000,
 	};
 
+	// GPIO input/output mode
 	enum class GPIO_Mode_t : uint8_t
 	{
 		INPUT  = 0b0,
 		OUTPUT = 0b1,
 	};
 
+	// GPIO signal selection
 	enum class GPIO_Sel_t : uint8_t
 	{
 		OFF       = 0b0000,
@@ -31,6 +34,7 @@ public:
 		RAMP_CLK  = 0b1110,
 	};
 
+	// Power state
 	enum class Power_State_t : uint8_t
 	{
 		DEEP_SLEEP = 0b00,
@@ -39,6 +43,8 @@ public:
 		PLAY       = 0b11,
 	};
 
+	// Cycle-by-cycle current limit level
+	// percentage of the OCP threshold
 	enum class CBC_Sel_t : uint8_t
 	{
 		CBC_80_PERCENT = 0b00,
@@ -46,6 +52,7 @@ public:
 		CBC_40_PERCENT = 0b01,
 	};
 
+	// Spread spectrum random range
 	enum class SS_Rand_Range_t : uint8_t
 	{
 		// For Fsw of 384kHz
@@ -61,13 +68,14 @@ public:
 		// 3'b100: SS range +/- 14.29%
 		// 3'b101: SS range +/- 29.52%
 		// not sure what the setting actuall means outside of the given example in the datasheet
-		SS_Rand_0_62  = 0b000,
-		SS_Rand_1_88  = 0b010,
-		SS_Rand_4_38  = 0b011,
-		SS_Rand_9_38  = 0b100,
-		SS_Rand_19_38 = 0b101,
+		SS_Rand_1 = 0b000,
+		SS_Rand_2 = 0b010,
+		SS_Rand_3 = 0b011,
+		SS_Rand_4 = 0b100,
+		SS_Rand_5 = 0b101,
 	};
 
+	// Spread spectrum triangular range
 	enum class SS_Tri_Range_t : uint8_t
 	{
 		SS_Tri_24kHz_5  = 0b0000,
