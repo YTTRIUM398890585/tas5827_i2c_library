@@ -111,6 +111,19 @@ bool TAS5827::setPvddUvCtrl(bool uvHiZEn, UV_Avg_t uvAvg, bool pvddDropDetectEn)
 
 	return writeRegister(REG_PVDD_UV_CONTROL, pvddUvCtrl);
 }
+
+/**
+ * @brief set the auto increment page
+ *
+ * @param autoInc true - auto increment page
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setAutoIncPage(bool autoInc)
+{
+	return writeRegister(REG_I2C_PAGE_AUTO_INC, autoInc ? 0 : (1 << 3));
+}
+
 /**
  * @brief set the signal channel control
  *
@@ -450,6 +463,26 @@ bool TAS5827::getPvddUvCtrl(bool* p_uvHiZEn, UV_Avg_t* p_uvAvg, bool* p_pvddDrop
 		*p_uvHiZEn          = static_cast<bool>(reg & 0x08);
 		*p_uvAvg            = static_cast<UV_Avg_t>((reg & 0x06) >> 1);
 		*p_pvddDropDetectEn = static_cast<bool>(reg & 0x01);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the auto increment page
+ *
+ * @param p_autoInc pointer to return the auto increment page
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getAutoIncPage(bool* p_autoInc)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_I2C_PAGE_AUTO_INC, &reg)) {
+		*p_autoInc = !static_cast<bool>(reg & 0x08);
 		return true;
 	}
 	else {

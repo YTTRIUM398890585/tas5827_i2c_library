@@ -225,6 +225,7 @@ public:
 	bool setDevCtrl1(Fsw_t fsw, bool pbtl, Modulation_t mod);
 	bool setDevCtrl2(bool dspEn, bool ch1Mute, bool ch2Mute, Power_State_t powState);
 	bool setPvddUvCtrl(bool uvHiZEn, UV_Avg_t uvAvg, bool pvddDropDetectEn);
+	bool setAutoIncPage(bool autoInc);
 	bool setSigChCtrl(BCLK_t bclk, FS_t fs);
 	bool setAutoMuteCtrl(bool bothMute, bool ch1Mute, bool ch2Mute);
 	bool setAutoMuteTime(Auto_Mute_Time_t ch1Time, Auto_Mute_Time_t ch2Time);
@@ -246,6 +247,7 @@ public:
 	bool getDevCtrl1(Fsw_t* p_fsw, bool* p_pbtl, Modulation_t* p_mod);
 	bool getDevCtrl2(bool* p_dspEn, bool* p_ch1Mute, bool* p_ch2Mute, Power_State_t* p_powState);
 	bool getPvddUvCtrl(bool* p_uvHiZEn, UV_Avg_t* p_uvAvg, bool* p_pvddDropDetectEn);
+	bool getAutoIncPage(bool* p_autoInc);
 	bool getSigChCtrl(BCLK_t* p_bclk, FS_t* p_fs);
 	bool getAutoMuteCtrl(bool* p_bothMute, bool* p_ch1Mute, bool* p_ch2Mute);
 	bool getAutoMuteTime(Auto_Mute_Time_t* p_ch1Time, Auto_Mute_Time_t* p_ch2Time);
