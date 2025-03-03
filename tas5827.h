@@ -46,6 +46,34 @@ public:
 		MUTE_TIME_2_665_S  = 0b110,
 		MUTE_TIME_5_33_S   = 0b111,
 	};
+
+	// Data bit clock frequency
+	// multiples of the sample frequency
+	enum class BCLK_t : uint8_t
+	{
+		BCLK_AUTO  = 0b0000,
+		BCLK_32FS  = 0b0011,
+		BCLK_64FS  = 0b0101,
+		BCLK_128FS = 0b0111,
+		BCLK_256FS = 0b1001,
+		BCLK_512FS = 0b1011,
+	};
+
+	// Sample frequency
+	enum class FS_t : uint8_t
+	{
+		FS_AUTO      = 0b0000,
+		FS_8_KHZ     = 0b0010,
+		FS_16_KHZ    = 0b0100,
+		FS_32_KHZ    = 0b0110,
+		FS_44_1_KHZ  = 0b1000,
+		FS_48_KHZ    = 0b1001,
+		FS_88_2_KHZ  = 0b1010,
+		FS_96_KHZ    = 0b1011,
+		FS_176_4_KHZ = 0b1100,
+		FS_192_KHZ   = 0b1101,
+	};
+
 	// closed loop bandwidth
 	enum class Loop_BW_t : uint8_t
 	{
@@ -197,6 +225,7 @@ public:
 	bool setDevCtrl1(Fsw_t fsw, bool pbtl, Modulation_t mod);
 	bool setDevCtrl2(bool dspEn, bool ch1Mute, bool ch2Mute, Power_State_t powState);
 	bool setPvddUvCtrl(bool uvHiZEn, UV_Avg_t uvAvg, bool pvddDropDetectEn);
+	bool setSigChCtrl(BCLK_t bclk, FS_t fs);
 	bool setAutoMuteCtrl(bool bothMute, bool ch1Mute, bool ch2Mute);
 	bool setAutoMuteTime(Auto_Mute_Time_t ch1Time, Auto_Mute_Time_t ch2Time);
 	bool setLoopBW(Loop_BW_t loopBW);
@@ -217,6 +246,7 @@ public:
 	bool getDevCtrl1(Fsw_t* p_fsw, bool* p_pbtl, Modulation_t* p_mod);
 	bool getDevCtrl2(bool* p_dspEn, bool* p_ch1Mute, bool* p_ch2Mute, Power_State_t* p_powState);
 	bool getPvddUvCtrl(bool* p_uvHiZEn, UV_Avg_t* p_uvAvg, bool* p_pvddDropDetectEn);
+	bool getSigChCtrl(BCLK_t* p_bclk, FS_t* p_fs);
 	bool getAutoMuteCtrl(bool* p_bothMute, bool* p_ch1Mute, bool* p_ch2Mute);
 	bool getAutoMuteTime(Auto_Mute_Time_t* p_ch1Time, Auto_Mute_Time_t* p_ch2Time);
 	bool getLoopBW(Loop_BW_t* p_loopBW);

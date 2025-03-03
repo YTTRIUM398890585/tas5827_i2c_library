@@ -112,6 +112,24 @@ bool TAS5827::setPvddUvCtrl(bool uvHiZEn, UV_Avg_t uvAvg, bool pvddDropDetectEn)
 	return writeRegister(REG_PVDD_UV_CONTROL, pvddUvCtrl);
 }
 /**
+ * @brief set the signal channel control
+ *
+ * @param bclk bit clock
+ * @param fs sample frequency
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setSigChCtrl(BCLK_t bclk, FS_t fs)
+{
+	uint8_t sigChCtrl = 0;
+
+	sigChCtrl |= (static_cast<uint8_t>(bclk) & 0x0F) << 4;
+	sigChCtrl |= (static_cast<uint8_t>(fs) & 0x0F) << 0;
+
+	return writeRegister(REG_SIG_CH_CTRL, sigChCtrl);
+}
+
+/**
  * @brief set the auto mute control
  *
  * @param bothMute true - both channels are only muted when both channels are about to be auto muted
@@ -439,6 +457,27 @@ bool TAS5827::getPvddUvCtrl(bool* p_uvHiZEn, UV_Avg_t* p_uvAvg, bool* p_pvddDrop
 	}
 }
 
+/**
+ * @brief get the signal channel control
+ *
+ * @param p_bclk pointer to return the bit clock in BCLK_t
+ * @param p_fs pointer to return the sample frequency in FS_t
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getSigChCtrl(BCLK_t* p_bclk, FS_t* p_fs)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_SIG_CH_CTRL, &reg)) {
+		*p_bclk = static_cast<BCLK_t>((reg & 0xF0) >> 4);
+		*p_fs   = static_cast<FS_t>((reg & 0x0F));
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 
 /**
  * @brief get the auto mute control
