@@ -51,19 +51,19 @@ bool TAS5827::setAnalogGain(uint8_t gain)
 /**
  * @brief set the GPIOs to be input/output
  *
- * @param gpio_ctrl_0 GPIO 0 input/output
- * @param gpio_ctrl_1 GPIO 1 input/output
- * @param gpio_ctrl_2 GPIO 2 input/output
+ * @param gpioMode0 GPIO 0 input/output
+ * @param gpioMode1 GPIO 1 input/output
+ * @param gpioMode2 GPIO 2 input/output
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::setGPIOMode(GPIO_Mode_t gpio_ctrl_0, GPIO_Mode_t gpio_ctrl_1, GPIO_Mode_t gpio_ctrl_2)
+bool TAS5827::setGPIOMode(GPIO_Mode_t gpioMode0, GPIO_Mode_t gpioMode1, GPIO_Mode_t gpioMode2)
 {
 	uint8_t gpio_ctrl = 0;
 
-	gpio_ctrl |= static_cast<uint8_t>(gpio_ctrl_2) & 0x01 << 2;
-	gpio_ctrl |= static_cast<uint8_t>(gpio_ctrl_1) & 0x01 << 1;
-	gpio_ctrl |= static_cast<uint8_t>(gpio_ctrl_0) & 0x01;
+	gpio_ctrl |= static_cast<uint8_t>(gpioMode2) & 0x01 << 2;
+	gpio_ctrl |= static_cast<uint8_t>(gpioMode1) & 0x01 << 1;
+	gpio_ctrl |= static_cast<uint8_t>(gpioMode0) & 0x01;
 
 	return writeRegister(REG_GPIO_CTRL, gpio_ctrl);
 }
@@ -71,19 +71,19 @@ bool TAS5827::setGPIOMode(GPIO_Mode_t gpio_ctrl_0, GPIO_Mode_t gpio_ctrl_1, GPIO
 /**
  * @brief set the GPIOs to be OFF, WARNZ, FAULTZ, PVDD_DROP, SDOUT or RAMP_CLK
  *
- * @param gpio_mode_0 GPIO 0 mode
- * @param gpio_mode_1 GPIO 1 mode
- * @param gpio_mode_2 GPIO 2 mode
+ * @param gpioSel0 GPIO 0 mode
+ * @param gpioSel1 GPIO 1 mode
+ * @param gpioSel2 GPIO 2 mode
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::setGPIOSel(GPIO_Sel_t gpio_mode_0, GPIO_Sel_t gpio_mode_1, GPIO_Sel_t gpio_mode_2)
+bool TAS5827::setGPIOSel(GPIO_Sel_t gpioSel0, GPIO_Sel_t gpioSel1, GPIO_Sel_t gpioSel2)
 {
-	if (!writeRegister(REG_GPIO0_SEL, static_cast<uint8_t>(gpio_mode_0) & 0x0F))
+	if (!writeRegister(REG_GPIO0_SEL, static_cast<uint8_t>(gpioSel0) & 0x0F))
 		return false;
-	if (!writeRegister(REG_GPIO1_SEL, static_cast<uint8_t>(gpio_mode_1) & 0x0F))
+	if (!writeRegister(REG_GPIO1_SEL, static_cast<uint8_t>(gpioSel1) & 0x0F))
 		return false;
-	if (!writeRegister(REG_GPIO2_SEL, static_cast<uint8_t>(gpio_mode_2) & 0x0F))
+	if (!writeRegister(REG_GPIO2_SEL, static_cast<uint8_t>(gpioSel2) & 0x0F))
 		return false;
 	return true;
 }
@@ -91,19 +91,19 @@ bool TAS5827::setGPIOSel(GPIO_Sel_t gpio_mode_0, GPIO_Sel_t gpio_mode_1, GPIO_Se
 /**
  * @brief set the GPIOs inversion setting
  *
- * @param gpio_inv_0 GPIO 0 inversion, true for inverted
- * @param gpio_inv_1 GPIO 1 inversion, true for inverted
- * @param gpio_inv_2 GPIO 2 inversion, true for inverted
+ * @param gpioInv0 GPIO 0 inversion, true for inverted
+ * @param gpioInv1 GPIO 1 inversion, true for inverted
+ * @param gpioInv2 GPIO 2 inversion, true for inverted
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::setMiscCtrl2(bool gpio_inv_0, bool gpio_inv_1, bool gpio_inv_2)
+bool TAS5827::setMiscCtrl2(bool gpioInv0, bool gpioInv1, bool gpioInv2)
 {
 	uint8_t miscCtrl2 = 0;
 
-	miscCtrl2 |= gpio_inv_2 ? 1 << 2 : 0;
-	miscCtrl2 |= gpio_inv_1 ? 1 << 1 : 0;
-	miscCtrl2 |= gpio_inv_0 ? 1 << 0 : 0;
+	miscCtrl2 |= gpioInv2 ? 1 << 2 : 0;
+	miscCtrl2 |= gpioInv1 ? 1 << 1 : 0;
+	miscCtrl2 |= gpioInv0 ? 1 << 0 : 0;
 
 	return writeRegister(REG_MISC_CTRL2, miscCtrl2);
 }
@@ -122,17 +122,17 @@ bool TAS5827::setDisableSpreadSpectrum(void)
 /**
  * @brief enable the random spread spectrum
  *
- * @param rand_range range of the random spread spectrum
+ * @param randRange range of the random spread spectrum
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::setRandomSpreadSpectrum(SS_Rand_Range_t rand_range)
+bool TAS5827::setRandomSpreadSpectrum(SS_Rand_Range_t randRange)
 {
 	uint8_t spreadSpectrumCtrl0 = 0;
 	spreadSpectrumCtrl0 |= 1 << 1;
 
 	uint8_t spreadSpectrumCtrl1 = 0;
-	spreadSpectrumCtrl1 |= (static_cast<uint8_t>(rand_range) & 0x07) << 4;
+	spreadSpectrumCtrl1 |= (static_cast<uint8_t>(randRange) & 0x07) << 4;
 
 	if (!writeRegister(REG_RAMP_SS_CTRL0, spreadSpectrumCtrl0))
 		return false;
@@ -144,17 +144,17 @@ bool TAS5827::setRandomSpreadSpectrum(SS_Rand_Range_t rand_range)
 /**
  * @brief enable the triangular spread spectrum
  *
- * @param tri_range range of the triangular spread spectrum
+ * @param triRange range of the triangular spread spectrum
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::setTriangularSpreadSpectrum(SS_Tri_Range_t tri_range)
+bool TAS5827::setTriangularSpreadSpectrum(SS_Tri_Range_t triRange)
 {
 	uint8_t spreadSpectrumCtrl0 = 0;
 	spreadSpectrumCtrl0 |= 1 << 0;
 
 	uint8_t spreadSpectrumCtrl1 = 0;
-	spreadSpectrumCtrl1 |= (static_cast<uint8_t>(tri_range) & 0x0F);
+	spreadSpectrumCtrl1 |= (static_cast<uint8_t>(triRange) & 0x0F);
 
 	if (!writeRegister(REG_RAMP_SS_CTRL0, spreadSpectrumCtrl0))
 		return false;
@@ -203,21 +203,21 @@ bool TAS5827::setMiscCtrl3(uint8_t miscCtrl3)
 /**
  * @brief set the CBC control
  *
- * @param level_sel Cycle-By-Cycle current limiting level, percentage of the Over-Current Threshold:
- * @param cbc_en CBC enable
- * @param cbc_warn_en CBC warning enable
- * @param cbc_fault_en CBC fault enable
+ * @param levelSel Cycle-By-Cycle current limiting level, percentage of the Over-Current Threshold:
+ * @param cbcEn CBC enable
+ * @param cbcWarnEn CBC warning enable
+ * @param cbcFaultEn CBC fault enable
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::setCBCCtrl(CBC_Sel_t level_sel, bool cbc_en, bool cbc_warn_en, bool cbc_fault_en)
+bool TAS5827::setCBCCtrl(CBC_Sel_t levelSel, bool cbcEn, bool cbcWarnEn, bool cbcFaultEn)
 {
 	uint8_t cbcCtrl = 0;
 
-	cbcCtrl |= (static_cast<uint8_t>(level_sel) & 0x03) << 3;
-	cbcCtrl |= cbc_en ? 1 << 2 : 0;
-	cbcCtrl |= cbc_warn_en ? 1 << 1 : 0;
-	cbcCtrl |= cbc_fault_en ? 1 << 0 : 0;
+	cbcCtrl |= (static_cast<uint8_t>(levelSel) & 0x03) << 3;
+	cbcCtrl |= cbcEn ? 1 << 2 : 0;
+	cbcCtrl |= cbcWarnEn ? 1 << 1 : 0;
+	cbcCtrl |= cbcFaultEn ? 1 << 0 : 0;
 
 	return writeRegister(REG_CBC_CONTROL, cbcCtrl);
 }
@@ -301,20 +301,20 @@ bool TAS5827::getPVDD(float* p_pvdd)
 /**
  * @brief get the GPIOs mode
  *
- * @param p_gpio_mode_0 pointer to GPIO 0 mode to return
- * @param p_gpio_mode_1 pointer to GPIO 1 mode to return
- * @param p_gpio_mode_2 pointer to GPIO 2 mode to return
+ * @param p_gpioMode0 pointer to GPIO 0 mode to return
+ * @param p_gpioMode1 pointer to GPIO 1 mode to return
+ * @param p_gpioMode2 pointer to GPIO 2 mode to return
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::getGPIOMode(GPIO_Mode_t* p_gpio_mode_0, GPIO_Mode_t* p_gpio_mode_1, GPIO_Mode_t* p_gpio_mode_2)
+bool TAS5827::getGPIOMode(GPIO_Mode_t* p_gpioMode0, GPIO_Mode_t* p_gpioMode1, GPIO_Mode_t* p_gpioMode2)
 {
 	uint8_t reg;
 
 	if (readRegister(REG_GPIO_CTRL, &reg)) {
-		*p_gpio_mode_0 = static_cast<GPIO_Mode_t>(reg & 0x01);
-		*p_gpio_mode_1 = static_cast<GPIO_Mode_t>((reg & 0x02) >> 1);
-		*p_gpio_mode_2 = static_cast<GPIO_Mode_t>((reg & 0x04) >> 2);
+		*p_gpioMode0 = static_cast<GPIO_Mode_t>(reg & 0x01);
+		*p_gpioMode1 = static_cast<GPIO_Mode_t>((reg & 0x02) >> 1);
+		*p_gpioMode2 = static_cast<GPIO_Mode_t>((reg & 0x04) >> 2);
 		return true;
 	}
 	else {
@@ -325,32 +325,32 @@ bool TAS5827::getGPIOMode(GPIO_Mode_t* p_gpio_mode_0, GPIO_Mode_t* p_gpio_mode_1
 /**
  * @brief get the GPIOs function
  *
- * @param p_gpio_sel_0 pointer to GPIO 0 function to return
- * @param p_gpio_sel_1 pointer to GPIO 1 function to return
- * @param p_gpio_sel_2 pointer to GPIO 2 function to return
+ * @param p_gpioSel0 pointer to GPIO 0 function to return
+ * @param p_gpioSel1 pointer to GPIO 1 function to return
+ * @param p_gpioSel2 pointer to GPIO 2 function to return
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::getGPIOSel(GPIO_Sel_t* p_gpio_sel_0, GPIO_Sel_t* p_gpio_sel_1, GPIO_Sel_t* p_gpio_sel_2)
+bool TAS5827::getGPIOSel(GPIO_Sel_t* p_gpioSel0, GPIO_Sel_t* p_gpioSel1, GPIO_Sel_t* p_gpioSel2)
 {
 	uint8_t reg;
 
 	if (readRegister(REG_GPIO0_SEL, &reg)) {
-		*p_gpio_sel_0 = static_cast<GPIO_Sel_t>(reg & 0x0F);
+		*p_gpioSel0 = static_cast<GPIO_Sel_t>(reg & 0x0F);
 	}
 	else {
 		return false;
 	}
 
 	if (readRegister(REG_GPIO1_SEL, &reg)) {
-		*p_gpio_sel_1 = static_cast<GPIO_Sel_t>(reg & 0x0F);
+		*p_gpioSel1 = static_cast<GPIO_Sel_t>(reg & 0x0F);
 	}
 	else {
 		return false;
 	}
 
 	if (readRegister(REG_GPIO2_SEL, &reg)) {
-		*p_gpio_sel_2 = static_cast<GPIO_Sel_t>(reg & 0x0F);
+		*p_gpioSel2 = static_cast<GPIO_Sel_t>(reg & 0x0F);
 	}
 	else {
 		return false;
@@ -362,20 +362,20 @@ bool TAS5827::getGPIOSel(GPIO_Sel_t* p_gpio_sel_0, GPIO_Sel_t* p_gpio_sel_1, GPI
 /**
  * @brief get the GPIOs inversion setting
  *
- * @param p_gpio_inv_0 pointer to GPIO 0 inversion to return, true for inverted
- * @param p_gpio_inv_1 pointer to GPIO 1 inversion to return, true for inverted
- * @param p_gpio_inv_2 pointer to GPIO 2 inversion to return, true for inverted
+ * @param p_gpioInv0 pointer to GPIO 0 inversion to return, true for inverted
+ * @param p_gpioInv1 pointer to GPIO 1 inversion to return, true for inverted
+ * @param p_gpioInv2 pointer to GPIO 2 inversion to return, true for inverted
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::getMiscCtrl2(bool* p_gpio_inv_0, bool* p_gpio_inv_1, bool* p_gpio_inv_2)
+bool TAS5827::getMiscCtrl2(bool* p_gpioInv0, bool* p_gpioInv1, bool* p_gpioInv2)
 {
 	uint8_t reg;
 
 	if (readRegister(REG_MISC_CTRL2, &reg)) {
-		*p_gpio_inv_0 = static_cast<bool>(reg & 0x01);
-		*p_gpio_inv_1 = static_cast<bool>(reg & 0x02);
-		*p_gpio_inv_2 = static_cast<bool>(reg & 0x04);
+		*p_gpioInv0 = static_cast<bool>(reg & 0x01);
+		*p_gpioInv1 = static_cast<bool>(reg & 0x02);
+		*p_gpioInv2 = static_cast<bool>(reg & 0x04);
 		return true;
 	}
 	else {
@@ -406,18 +406,18 @@ bool TAS5827::getPowState(Power_State_t* p_powState)
 /**
  * @brief get the auto mute state
  *
- * @param p_chan_1_mute pointer to return the channel 1 mute state
- * @param p_chan_2_mute pointer to return the channel 2 mute state
+ * @param p_ch1Mute pointer to return the channel 1 mute state
+ * @param p_ch2Mute pointer to return the channel 2 mute state
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::getAutoMuteState(bool* p_chan_1_mute, bool* p_chan_2_mute)
+bool TAS5827::getAutoMuteState(bool* p_ch1Mute, bool* p_ch2Mute)
 {
 	uint8_t reg;
 
 	if (readRegister(REG_AUTOMUTE_STATE, &reg)) {
-		*p_chan_1_mute = static_cast<bool>(reg & 0x01);
-		*p_chan_2_mute = static_cast<bool>(reg & 0x02);
+		*p_ch1Mute = static_cast<bool>(reg & 0x01);
+		*p_ch2Mute = static_cast<bool>(reg & 0x02);
 		return true;
 	}
 	else {
@@ -428,30 +428,30 @@ bool TAS5827::getAutoMuteState(bool* p_chan_1_mute, bool* p_chan_2_mute)
 /**
  * @brief get the spread spectrum control
  *
- * @param p_triangular_en pointer to return the triangular spread spectrum enable
- * @param p_random_en pointer to return the random spread spectrum enable
- * @param p_rand_range pointer to return the random spread spectrum range
- * @param p_tri_range pointer to return the triangular spread spectrum range
+ * @param p_triangularEn pointer to return the triangular spread spectrum enable
+ * @param p_randomEn pointer to return the random spread spectrum enable
+ * @param p_randRange pointer to return the random spread spectrum range
+ * @param p_triRange pointer to return the triangular spread spectrum range
  * @return true - OK
  * @return false - Error
  */
 bool TAS5827::getSpreadSpectrumCtrl(
-	bool* p_triangular_en, bool* p_random_en, SS_Rand_Range_t* p_rand_range, SS_Tri_Range_t* p_tri_range
+	bool* p_triangularEn, bool* p_randomEn, SS_Rand_Range_t* p_randRange, SS_Tri_Range_t* p_triRange
 )
 {
 	uint8_t reg;
 
 	if (readRegister(REG_RAMP_SS_CTRL0, &reg)) {
-		*p_triangular_en = static_cast<bool>(reg & 0x01);
-		*p_random_en     = static_cast<bool>(reg & 0x02);
+		*p_triangularEn = static_cast<bool>(reg & 0x01);
+		*p_randomEn     = static_cast<bool>(reg & 0x02);
 	}
 	else {
 		return false;
 	}
 
 	if (readRegister(REG_RAMP_SS_CTRL1, &reg)) {
-		*p_rand_range = static_cast<SS_Rand_Range_t>((reg & 0x70) >> 4);
-		*p_tri_range  = static_cast<SS_Tri_Range_t>(reg & 0x0F);
+		*p_randRange = static_cast<SS_Rand_Range_t>((reg & 0x70) >> 4);
+		*p_triRange  = static_cast<SS_Tri_Range_t>(reg & 0x0F);
 		return true;
 	}
 	else {
@@ -602,19 +602,22 @@ bool TAS5827::getMiscCtrl3(uint8_t* p_miscCtrl3)
 /**
  * @brief get the CBC control
  *
- * @param p_cbcCtrl3 pointer to return the CBC control
+ * @param p_levelSel pointer to return the Cycle-By-Cycle current limiting level
+ * @param p_cbcEn pointer to return the CBC enable
+ * @param p_cbcWarnEn pointer to return the CBC warning enable
+ * @param p_cbcFaultEn pointer to return the CBC fault enable
  * @return true - OK
  * @return false - Error
  */
-bool TAS5827::getCbcCtrl(CBC_Sel_t* p_level_sel, bool* p_cbc_en, bool* p_cbc_warn_en, bool* p_cbc_fault_en)
+bool TAS5827::getCbcCtrl(CBC_Sel_t* p_levelSel, bool* p_cbcEn, bool* p_cbcWarnEn, bool* p_cbcFaultEn)
 {
 	uint8_t cbcCtrl = 0;
 
 	if (readRegister(REG_CBC_CONTROL, &cbcCtrl)) {
-		*p_level_sel    = static_cast<CBC_Sel_t>((cbcCtrl & 0x18) >> 3);
-		*p_cbc_en       = static_cast<bool>(cbcCtrl & 0x04);
-		*p_cbc_warn_en  = static_cast<bool>(cbcCtrl & 0x02);
-		*p_cbc_fault_en = static_cast<bool>(cbcCtrl & 0x01);
+		*p_levelSel   = static_cast<CBC_Sel_t>((cbcCtrl & 0x18) >> 3);
+		*p_cbcEn      = static_cast<bool>(cbcCtrl & 0x04);
+		*p_cbcWarnEn  = static_cast<bool>(cbcCtrl & 0x02);
+		*p_cbcFaultEn = static_cast<bool>(cbcCtrl & 0x01);
 		return true;
 	}
 	else {

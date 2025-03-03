@@ -147,29 +147,29 @@ public:
 	/* Setters */
 	bool setLoopBW(Loop_BW_t loopBW);
 	bool setAnalogGain(uint8_t gain);
-	bool setGPIOMode(GPIO_Mode_t gpio_mode_0, GPIO_Mode_t gpio_mode_1, GPIO_Mode_t gpio_mode_2);
-	bool setGPIOSel(GPIO_Sel_t gpio_sel_0, GPIO_Sel_t gpio_sel_1, GPIO_Sel_t gpio_sel_2);
-	bool setMiscCtrl2(bool gpio_inv_0, bool gpio_inv_1, bool gpio_inv_2);
+	bool setGPIOMode(GPIO_Mode_t gpioMode0, GPIO_Mode_t gpioMode1, GPIO_Mode_t gpioMode2);
+	bool setGPIOSel(GPIO_Sel_t gpioSel0, GPIO_Sel_t gpioSel1, GPIO_Sel_t gpioSel2);
+	bool setMiscCtrl2(bool gpioInv0, bool gpioInv1, bool gpioInv2);
 	bool setDisableSpreadSpectrum(void);
-	bool setRandomSpreadSpectrum(SS_Rand_Range_t rand_range);
-	bool setTriangularSpreadSpectrum(SS_Tri_Range_t tri_range);
+	bool setRandomSpreadSpectrum(SS_Rand_Range_t randRange);
+	bool setTriangularSpreadSpectrum(SS_Tri_Range_t triRange);
 	bool setPinCtrl1(uint8_t pinCtrl1);
 	bool setPinCtrl2(uint8_t pinCtrl2);
 	bool setMiscCtrl3(uint8_t miscCtrl3);
-	bool setCBCCtrl(CBC_Sel_t level_sel, bool cbc_en, bool cbc_warn_en, bool cbc_fault_en);
+	bool setCBCCtrl(CBC_Sel_t levelSel, bool cbcEn, bool cbcWarnEn, bool cbcFaultEn);
 	bool setFaultClear(void);
 
 	/* Getters */
 	bool getLoopBW(Loop_BW_t* p_loopBW);
 	bool getAnalogGain(float* p_gain);
 	bool getPVDD(float* p_pvdd);
-	bool getGPIOMode(GPIO_Mode_t* p_gpio_mode_0, GPIO_Mode_t* p_gpio_mode_1, GPIO_Mode_t* p_gpio_mode_2);
-	bool getGPIOSel(GPIO_Sel_t* p_gpio_sel_0, GPIO_Sel_t* p_gpio_sel_1, GPIO_Sel_t* p_gpio_sel_2);
-	bool getMiscCtrl2(bool* p_gpio_inv_0, bool* p_gpio_inv_1, bool* p_gpio_inv_2);
+	bool getGPIOMode(GPIO_Mode_t* p_gpioMode0, GPIO_Mode_t* p_gpioMode1, GPIO_Mode_t* p_gpioMode2);
+	bool getGPIOSel(GPIO_Sel_t* p_gpioSel0, GPIO_Sel_t* p_gpioSel1, GPIO_Sel_t* p_gpioSel2);
+	bool getMiscCtrl2(bool* p_gpioInv0, bool* p_gpioInv1, bool* p_gpioInv2);
 	bool getPowState(Power_State_t* p_powState);
-	bool getAutoMuteState(bool* p_chan_1_mute, bool* p_chan_2_mute);
+	bool getAutoMuteState(bool* p_ch1Mute, bool* p_ch2Mute);
 	bool getSpreadSpectrumCtrl(
-		bool* p_triangular_en, bool* p_random_en, SS_Rand_Range_t* p_rand_range, SS_Tri_Range_t* p_tri_range
+		bool* p_triangularEn, bool* p_randomEn, SS_Rand_Range_t* p_randRange, SS_Tri_Range_t* p_triRange
 	);
 	bool getChanFault(uint8_t* p_chanFault);
 	bool getGlobalFault1(uint8_t* p_globalFault1);
@@ -178,7 +178,7 @@ public:
 	bool getPinCtrl1(uint8_t* p_pinCtrl1);
 	bool getPinCtrl2(uint8_t* p_pinCtrl2);
 	bool getMiscCtrl3(uint8_t* p_miscCtrl3);
-	bool getCbcCtrl(CBC_Sel_t* p_level_sel, bool* p_cbc_en, bool* p_cbc_warn_en, bool* p_cbc_fault_en);
+	bool getCbcCtrl(CBC_Sel_t* p_levelSel, bool* p_cbcEn, bool* p_cbcWarnEn, bool* p_cbcFaultEn);
 
 private:
 	uint8_t address;
