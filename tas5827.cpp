@@ -111,6 +111,43 @@ bool TAS5827::setPvddUvCtrl(bool uvHiZEn, UV_Avg_t uvAvg, bool pvddDropDetectEn)
 
 	return writeRegister(REG_PVDD_UV_CONTROL, pvddUvCtrl);
 }
+/**
+ * @brief set the auto mute control
+ *
+ * @param bothMute true - both channels are only muted when both channels are about to be auto muted
+ * @param ch1Mute true - channel 1 is set to auto muted
+ * @param ch2Mute true - channel 2 is set to auto muted
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setAutoMuteCtrl(bool bothMute, bool ch1Mute, bool ch2Mute)
+{
+	uint8_t autoMuteCtrl = 0;
+
+	autoMuteCtrl |= bothMute ? (1 << 2) : 0;
+	autoMuteCtrl |= ch2Mute ? (1 << 1) : 0;
+	autoMuteCtrl |= ch1Mute ? (1 << 0) : 0;
+
+	return writeRegister(REG_AUTO_MUTE_CTRL, autoMuteCtrl);
+}
+
+/**
+ * @brief set the auto mute time
+ *
+ * @param ch1Time channel 1 auto mute time
+ * @param ch2Time channel 2 auto mute time
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setAutoMuteTime(Auto_Mute_Time_t ch1Time, Auto_Mute_Time_t ch2Time)
+{
+	uint8_t autoMuteTime = 0;
+
+	autoMuteTime |= (static_cast<uint8_t>(ch1Time) & 0x03) << 4;
+	autoMuteTime |= (static_cast<uint8_t>(ch2Time) & 0x03) << 0;
+
+	return writeRegister(REG_AUTO_MUTE_TIME, autoMuteTime);
+}
 
 /**
  * @brief set the loop bandwidth for the class D amplifier
@@ -402,6 +439,53 @@ bool TAS5827::getPvddUvCtrl(bool* p_uvHiZEn, UV_Avg_t* p_uvAvg, bool* p_pvddDrop
 	}
 }
 
+
+/**
+ * @brief get the auto mute control
+ *
+ * @param p_bothMute pointer to return if both channels are set to be muted only when both channels are about to be auto
+ * muted
+ * @param p_ch1Mute pointer to return if channel 1 is set to auto muted
+ * @param p_ch2Mute pointer to return if channel 2 is set to auto muted
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getAutoMuteCtrl(bool* p_bothMute, bool* p_ch1Mute, bool* p_ch2Mute)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_AUTO_MUTE_CTRL, &reg)) {
+		*p_bothMute = static_cast<bool>(reg & 0x04);
+		*p_ch2Mute  = static_cast<bool>(reg & 0x02);
+		*p_ch1Mute  = static_cast<bool>(reg & 0x01);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the auto mute time
+ *
+ * @param p_ch1Time pointer to return the channel 1 auto mute time in Auto_Mute_Time_t
+ * @param p_ch2Time pointer to return the channel 2 auto mute time in Auto_Mute_Time_t
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getAutoMuteTime(Auto_Mute_Time_t* p_ch1Time, Auto_Mute_Time_t* p_ch2Time)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_AUTO_MUTE_TIME, &reg)) {
+		*p_ch1Time = static_cast<Auto_Mute_Time_t>((reg & 0x30) >> 4);
+		*p_ch2Time = static_cast<Auto_Mute_Time_t>(reg & 0x03);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 
 /**
  * @brief get the loop bandwidth

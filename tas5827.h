@@ -7,6 +7,18 @@ class TAS5827
 {
 public:
 	/* Enums */
+	// Time of no input to auto mute a channel
+	enum class Auto_Mute_Time_t : uint8_t
+	{
+		MUTE_TIME_11_5_MS  = 0b000,
+		MUTE_TIME_53_MS    = 0b001,
+		MUTE_TIME_106_5_MS = 0b010,
+		MUTE_TIME_266_5_MS = 0b011,
+		MUTE_TIME_0_535_S  = 0b100,
+		MUTE_TIME_1_065_S  = 0b101,
+		MUTE_TIME_2_665_S  = 0b110,
+		MUTE_TIME_5_33_S   = 0b111,
+	};
 	// closed loop bandwidth
 	enum class Loop_BW_t : uint8_t
 	{
@@ -158,6 +170,8 @@ public:
 	bool setDevCtrl1(Fsw_t fsw, bool pbtl, Modulation_t mod);
 	bool setDevCtrl2(bool dspEn, bool ch1Mute, bool ch2Mute, Power_State_t powState);
 	bool setPvddUvCtrl(bool uvHiZEn, UV_Avg_t uvAvg, bool pvddDropDetectEn);
+	bool setAutoMuteCtrl(bool bothMute, bool ch1Mute, bool ch2Mute);
+	bool setAutoMuteTime(Auto_Mute_Time_t ch1Time, Auto_Mute_Time_t ch2Time);
 	bool setLoopBW(Loop_BW_t loopBW);
 	bool setAnalogGain(uint8_t gain);
 	bool setGPIOMode(GPIO_Mode_t gpioMode0, GPIO_Mode_t gpioMode1, GPIO_Mode_t gpioMode2);
@@ -176,6 +190,8 @@ public:
 	bool getDevCtrl1(Fsw_t* p_fsw, bool* p_pbtl, Modulation_t* p_mod);
 	bool getDevCtrl2(bool* p_dspEn, bool* p_ch1Mute, bool* p_ch2Mute, Power_State_t* p_powState);
 	bool getPvddUvCtrl(bool* p_uvHiZEn, UV_Avg_t* p_uvAvg, bool* p_pvddDropDetectEn);
+	bool getAutoMuteCtrl(bool* p_bothMute, bool* p_ch1Mute, bool* p_ch2Mute);
+	bool getAutoMuteTime(Auto_Mute_Time_t* p_ch1Time, Auto_Mute_Time_t* p_ch2Time);
 	bool getLoopBW(Loop_BW_t* p_loopBW);
 	bool getAnalogGain(float* p_gain);
 	bool getPVDD(float* p_pvdd);
