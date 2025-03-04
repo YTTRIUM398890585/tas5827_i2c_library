@@ -227,6 +227,7 @@ public:
 	bool setPvddUvCtrl(bool uvHiZEn, UV_Avg_t uvAvg, bool pvddDropDetectEn);
 	bool setAutoIncPage(bool autoInc);
 	bool setSigChCtrl(BCLK_t bclk, FS_t fs);
+	bool setClockDetCtrl(bool detPll, bool detBclkRange, bool detFs, bool detBclkRatio, bool detBclkMissing);
 	bool setAutoMuteCtrl(bool bothMute, bool ch1Mute, bool ch2Mute);
 	bool setAutoMuteTime(Auto_Mute_Time_t ch1Time, Auto_Mute_Time_t ch2Time);
 	bool setLoopBW(Loop_BW_t loopBW);
@@ -249,6 +250,10 @@ public:
 	bool getPvddUvCtrl(bool* p_uvHiZEn, UV_Avg_t* p_uvAvg, bool* p_pvddDropDetectEn);
 	bool getAutoIncPage(bool* p_autoInc);
 	bool getSigChCtrl(BCLK_t* p_bclk, FS_t* p_fs);
+	bool getClockDetCtrl(bool* p_detPll, bool* p_detBclkRange, bool* p_detFs, bool* p_detBclkRatio, bool* p_detBclkMissing);
+	bool getClockDetStatus(
+		bool* p_bclkOverRate, bool* p_pllOverRate, bool* p_pllLocked, bool* p_bclkMissing, bool* p_blckValid, bool* p_fsValid
+	);
 	bool getAutoMuteCtrl(bool* p_bothMute, bool* p_ch1Mute, bool* p_ch2Mute);
 	bool getAutoMuteTime(Auto_Mute_Time_t* p_ch1Time, Auto_Mute_Time_t* p_ch2Time);
 	bool getLoopBW(Loop_BW_t* p_loopBW);

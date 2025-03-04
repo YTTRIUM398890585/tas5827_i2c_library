@@ -143,6 +143,30 @@ bool TAS5827::setSigChCtrl(BCLK_t bclk, FS_t fs)
 }
 
 /**
+ * @brief set the clock fault detection control
+ *
+ * @param detPll PLL clock detection enable
+ * @param detBclkRange bit clock range detection enable
+ * @param detFs sample frequency detection enable
+ * @param detBclkRatio bit clock to sample frequency ratio detection enable
+ * @param detBclkMissing bit clock missing detection enable
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setClockDetCtrl(bool detPll, bool detBclkRange, bool detFs, bool detBclkRatio, bool detBclkMissing)
+{
+	uint8_t clockDetCtrl = 0;
+
+	clockDetCtrl |= detPll ? 0 : (1 << 6);
+	clockDetCtrl |= detBclkRange ? 0 : (1 << 5);
+	clockDetCtrl |= detFs ? 0 : (1 << 4);
+	clockDetCtrl |= detBclkRatio ? 0 : (1 << 3);
+	clockDetCtrl |= detBclkMissing ? 0 : (1 << 2);
+
+	return writeRegister(REG_CLOCK_DET_CTRL, clockDetCtrl);
+}
+
+/**
  * @brief set the auto mute control
  *
  * @param bothMute true - both channels are only muted when both channels are about to be auto muted
@@ -505,6 +529,65 @@ bool TAS5827::getSigChCtrl(BCLK_t* p_bclk, FS_t* p_fs)
 	if (readRegister(REG_SIG_CH_CTRL, &reg)) {
 		*p_bclk = static_cast<BCLK_t>((reg & 0xF0) >> 4);
 		*p_fs   = static_cast<FS_t>((reg & 0x0F));
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the clock fault detection control
+ *
+ * @param p_detPll pointer to return the PLL clock detection enable
+ * @param p_detBclkRange pointer to return the bit clock range detection enable
+ * @param p_detFs pointer to return the sample frequency detection enable
+ * @param p_detBclkRatio pointer to return the bit clock to sample frequency ratio detection enable
+ * @param p_detBclkMissing pointer to return the bit clock missing detection enable
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getClockDetCtrl(bool* p_detPll, bool* p_detBclkRange, bool* p_detFs, bool* p_detBclkRatio, bool* p_detBclkMissing)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_CLOCK_DET_CTRL, &reg)) {
+		*p_detPll       = static_cast<bool>(reg & (1 << 6));
+		*p_detBclkRange = static_cast<bool>(reg & (1 << 5));
+		*p_detFs        = static_cast<bool>(reg & (1 << 4));
+		*p_detBclkRatio = static_cast<bool>(reg & (1 << 3));
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the clock detection status
+ *
+ * @param p_bclkOverRate pointer to return, true = over rate, false = under rate
+ * @param p_pllOverRate pointer to return, true = over rate, false = under rate
+ * @param p_pllLocked pointer to return if the PLL is locked, true = locked
+ * @param p_bclkMissing pointer to return if the bit clock is missing, true = missing
+ * @param p_blckValid pointer to return if the bit clock is valid, true = valid
+ * @param p_fsValid pointer to return if the sample frequency is valid, true = valid
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getClockDetStatus(
+	bool* p_bclkOverRate, bool* p_pllOverRate, bool* p_pllLocked, bool* p_bclkMissing, bool* p_blckValid, bool* p_fsValid
+)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_CLKDET_STATUS, &reg)) {
+		*p_bclkOverRate = static_cast<bool>(reg & (1 << 5));
+		*p_pllOverRate  = static_cast<bool>(reg & (1 << 4));
+		*p_pllLocked    = static_cast<bool>(reg & (1 << 3));
+		*p_bclkMissing  = static_cast<bool>(reg & (1 << 2));
+		*p_blckValid    = static_cast<bool>(reg & (1 << 1));
+		*p_fsValid      = static_cast<bool>(reg & (1 << 0));
 		return true;
 	}
 	else {
