@@ -165,6 +165,25 @@ bool TAS5827::setClockDetCtrl(bool detPll, bool detBclkRange, bool detFs, bool d
 
 	return writeRegister(REG_CLOCK_DET_CTRL, clockDetCtrl);
 }
+/**
+ * @brief set the DSP Program Mode
+ *
+ * @param ch1HiZ channel 1 Hi-Z mode, true for Hi-Z
+ * @param ch2HiZ channel 2 Hi-Z mode, true for Hi-Z
+ * @param romMode ROM mode, true for ROM mode, false for RAM mode
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setDspPgmMode(bool ch1HiZ, bool ch2HiZ, bool romMode)
+{
+	uint8_t dspPgmMode = 0;
+
+	dspPgmMode |= ch1HiZ ? (1 << 3) : 0;
+	dspPgmMode |= ch2HiZ ? (1 << 2) : 0;
+	dspPgmMode |= romMode ? (1 << 0) : 0;
+
+	return writeRegister(REG_DSP_PGM_MODE, dspPgmMode);
+}
 
 /**
  * @brief set the auto mute control
@@ -588,6 +607,30 @@ bool TAS5827::getClockDetStatus(
 		*p_bclkMissing  = static_cast<bool>(reg & (1 << 2));
 		*p_blckValid    = static_cast<bool>(reg & (1 << 1));
 		*p_fsValid      = static_cast<bool>(reg & (1 << 0));
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the DSP Program Mode
+ *
+ * @param p_ch1HiZ pointer to return if channel 1 is set to be in Hi-Z mode
+ * @param p_ch2HiZ pointer to return if channel 2 is set to be in Hi-Z mode
+ * @param p_romMode pointer to return if the ROM mode is enabled, true = ROM mode, false = RAM mode
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getDspPgmMode(bool* p_ch1HiZ, bool* p_ch2HiZ, bool* p_romMode)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_DSP_PGM_MODE, &reg)) {
+		*p_ch1HiZ  = static_cast<bool>(reg & (1 << 3));
+		*p_ch2HiZ  = static_cast<bool>(reg & (1 << 2));
+		*p_romMode = static_cast<bool>(reg & (1 << 0));
 		return true;
 	}
 	else {
