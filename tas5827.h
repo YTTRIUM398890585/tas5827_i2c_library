@@ -304,9 +304,7 @@ public:
 	bool getMiscCtrl2(bool* p_gpioInv0, bool* p_gpioInv1, bool* p_gpioInv2);
 	bool getPowState(Power_State_t* p_powState);
 	bool getAutoMuteState(bool* p_ch1Mute, bool* p_ch2Mute);
-	bool getSpreadSpectrumCtrl(
-		bool* p_triangularEn, bool* p_randomEn, SS_Rand_Range_t* p_randRange, SS_Tri_Range_t* p_triRange
-	);
+	bool getSpreadSpectrumCtrl(bool* p_triangularEn, bool* p_randomEn, SS_Rand_Range_t* p_randRange, SS_Tri_Range_t* p_triRange);
 	bool getChanFault(uint8_t* p_chanFault);
 	bool getGlobalFault1(uint8_t* p_globalFault1);
 	bool getGlobalFault2(uint8_t* p_globalFault2);
