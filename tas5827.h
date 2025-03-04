@@ -74,6 +74,36 @@ public:
 		FS_192_KHZ   = 0b1101,
 	};
 
+	// Data format
+	enum class Format_t : uint8_t
+	{
+		I2S     = 0b00,
+		DSP_TDM = 0b01,
+		RTJ     = 0b10,
+		LTJ     = 0b11,
+	};
+
+	// Data bit depth
+	enum class Bit_Depth_t : uint8_t
+	{
+		I2S_16_BIT = 0b00,
+		I2S_20_BIT = 0b01,
+		I2S_24_BIT = 0b10,
+		I2S_32_BIT = 0b11,
+	};
+
+	// Sample frequency monitoring (for some reason its a subset of FS_t)
+	enum class FS_Monitoring_t : uint8_t
+	{
+		FS_ERROR   = 0b0000,
+		FS_8_KHZ   = 0b0010,
+		FS_16_KHZ  = 0b0100,
+		FS_32_KHZ  = 0b0110,
+		FS_48_KHZ  = 0b1001,
+		FS_96_KHZ  = 0b1011,
+		FS_192_KHZ = 0b1101,
+	};
+
 	// closed loop bandwidth
 	enum class Loop_BW_t : uint8_t
 	{
@@ -228,6 +258,9 @@ public:
 	bool setAutoIncPage(bool autoInc);
 	bool setSigChCtrl(BCLK_t bclk, FS_t fs);
 	bool setClockDetCtrl(bool detPll, bool detBclkRange, bool detFs, bool detBclkRatio, bool detBclkMissing);
+	bool setI2sCtrl(bool blckInv);
+	bool setSapCtrl1(uint8_t i2sShiftMsb, Format_t i2sFormat, bool lrclkPulseWidth, Bit_Depth_t i2sBitDepth);
+	bool setSapCtrl2(uint8_t i2sShiftLsb);
 	bool setDspPgmMode(bool ch1HiZ, bool ch2HiZ, bool romMode);
 	bool setAutoMuteCtrl(bool bothMute, bool ch1Mute, bool ch2Mute);
 	bool setAutoMuteTime(Auto_Mute_Time_t ch1Time, Auto_Mute_Time_t ch2Time);
@@ -252,6 +285,11 @@ public:
 	bool getAutoIncPage(bool* p_autoInc);
 	bool getSigChCtrl(BCLK_t* p_bclk, FS_t* p_fs);
 	bool getClockDetCtrl(bool* p_detPll, bool* p_detBclkRange, bool* p_detFs, bool* p_detBclkRatio, bool* p_detBclkMissing);
+	bool getI2sCtrl(bool* p_blckInv);
+	bool getSapCtrl1(uint8_t* p_i2sShiftMsb, Format_t* p_i2sFormat, bool* p_lrclkPulseWidth, Bit_Depth_t* p_i2sBitDepth);
+	bool getSapCtrl2(uint8_t* p_i2sShiftLsb);
+	bool getFsMon(uint8_t* p_bclkMonMsb, FS_Monitoring_t* p_fsMon);
+	bool getBclkMonLsb(uint8_t* p_bclkMonLsb);
 	bool getClockDetStatus(
 		bool* p_bclkOverRate, bool* p_pllOverRate, bool* p_pllLocked, bool* p_bclkMissing, bool* p_blckValid, bool* p_fsValid
 	);

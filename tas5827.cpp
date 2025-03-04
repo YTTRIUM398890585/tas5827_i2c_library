@@ -165,6 +165,57 @@ bool TAS5827::setClockDetCtrl(bool detPll, bool detBclkRange, bool detFs, bool d
 
 	return writeRegister(REG_CLOCK_DET_CTRL, clockDetCtrl);
 }
+
+/**
+ * @brief set the I2S control
+ *
+ * @param blckInv bit clock inversion, true for inverted
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setI2sCtrl(bool blckInv)
+{
+	uint8_t i2sCtrl = 0;
+
+	i2sCtrl |= blckInv ? (1 << 5) : 0;
+
+	return writeRegister(REG_I2S_CTRL, i2sCtrl);
+}
+
+/**
+ * @brief set the serial audio port control 1
+ *
+ * @param i2sShiftMsb I2S data shift MSB, combine with the 8 bits in low register 34h REG_SAP_CTRL2.
+ * @param i2sFormat I2S data format
+ * @param lrclkPulseWidth LRCLK pulse width, if true, the LRCLK pulse is shorter than 8 x BCLK, set to '01' else '00'
+ * @param i2sBitDepth I2S data bit depth
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setSapCtrl1(uint8_t i2sShiftMsb, Format_t i2sFormat, bool lrclkPulseWidth, Bit_Depth_t i2sBitDepth)
+{
+	uint8_t sapCtrl1 = 0;
+
+	sapCtrl1 |= (i2sShiftMsb & (1 << 0)) << 7;
+	sapCtrl1 |= (static_cast<uint8_t>(i2sFormat) & 0x03) << 4;
+	sapCtrl1 |= lrclkPulseWidth ? (1 << 2) : 0;
+	sapCtrl1 |= (static_cast<uint8_t>(i2sBitDepth) & 0x03) << 0;
+
+	return writeRegister(REG_SAP_CTRL1, sapCtrl1);
+}
+
+/**
+ * @brief set the serial audio port control 2
+ *
+ * @param i2sShiftLsb I2S data shift LSB, combine with the 8 bits in high register 33h REG_SAP_CTRL1.
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setSapCtrl2(uint8_t i2sShiftLsb)
+{
+	return writeRegister(REG_SAP_CTRL2, i2sShiftLsb);
+}
+
 /**
  * @brief set the DSP Program Mode
  *
@@ -580,6 +631,98 @@ bool TAS5827::getClockDetCtrl(bool* p_detPll, bool* p_detBclkRange, bool* p_detF
 	else {
 		return false;
 	}
+}
+
+/**
+ * @brief get the I2S control
+ *
+ * @param p_blckInv pointer to return the bit clock inversion, true for inverted
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getI2sCtrl(bool* p_blckInv)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_I2S_CTRL, &reg)) {
+		*p_blckInv = static_cast<bool>(reg & (1 << 5));
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the serial audio port control 1
+ *
+ * @param p_i2sShiftMsb pointer to return the I2S data shift MSB
+ * @param p_i2sFormat pointer to return the I2S data format in Format_t
+ * @param p_lrclkPulseWidth pointer to return the LRCLK pulse width, true if the LRCLK pulse is shorter than 8 x BCLK
+ * @param p_i2sBitDepth pointer to return the I2S data bit depth in Bit_Depth_t
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getSapCtrl1(uint8_t* p_i2sShiftMsb, Format_t* p_i2sFormat, bool* p_lrclkPulseWidth, Bit_Depth_t* p_i2sBitDepth)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_SAP_CTRL1, &reg)) {
+		*p_i2sShiftMsb     = static_cast<uint8_t>(reg & (1 << 7)) >> 7;
+		*p_i2sFormat       = static_cast<Format_t>((reg & 0x30) >> 4);
+		*p_lrclkPulseWidth = static_cast<bool>(reg & (1 << 2));
+		*p_i2sBitDepth     = static_cast<Bit_Depth_t>(reg & 0x03);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the serial audio port control 2
+ *
+ * @param p_i2sShiftLsb pointer to return the I2S data shift LSB
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getSapCtrl2(uint8_t* p_i2sShiftLsb)
+{
+	return readRegister(REG_SAP_CTRL2, p_i2sShiftLsb);
+}
+
+/**
+ * @brief get the sampling frequency monitoring and MSB of bit clock frequency monitoring
+ *
+ * @param p_bclkMonMsb pointer to return the MSB of the bit clock frequency monitoring
+ * @param p_fsMon pointer to return the sampling frequency monitoring in FS_Monitoring_t
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getFsMon(uint8_t* p_bclkMonMsb, FS_Monitoring_t* p_fsMon)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_FS_MON, &reg)) {
+		*p_bclkMonMsb = static_cast<uint8_t>(reg & 0x03) >> 4;
+		*p_fsMon      = static_cast<FS_Monitoring_t>(reg & 0x0F);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get LSB of bit clock frequency monitoring
+ *
+ * @param p_bclkMonLsb pointer to return the LSB of the bit clock frequency monitoring
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getBclkMonLsb(uint8_t* p_bclkMonLsb)
+{
+	return readRegister(REG_BCLK_MON, p_bclkMonLsb);
 }
 
 /**
