@@ -257,6 +257,82 @@ bool TAS5827::setDspCtrl(Proc_Rate_t procRate, bool IramBoot, bool defCoeff)
 }
 
 /**
+ * @brief set the digital volume left, channel 1
+ * The volume is set in -0.5 dB steps.
+ * 0 = +24.0 dB
+ * 1 = +23.5 dB
+ * ...
+ * 254 = -103 dB
+ * 255 = Mute
+ *
+ * @param vol volume to set
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setDigVolLeft(uint8_t vol)
+{
+	return writeRegister(REG_DIG_VOL_LEFT, vol);
+}
+
+/**
+ * @brief set the digital volume right, channel 2
+ * The volume is set in -0.5 dB steps.
+ * 0 = +24.0 dB
+ * 1 = +23.5 dB
+ * ...
+ * 254 = -103 dB
+ * 255 = Mute
+ *
+ * @param vol volume to set
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setDigVolRight(uint8_t vol)
+{
+	return writeRegister(REG_DIG_VOL_RIGHT, vol);
+}
+
+/**
+ * @brief set the digital volume control 2
+ *
+ * @param vnus volume update speed for volume up, in dB per update
+ * @param vnuf volume update frequency for volume up, in sample periods per update
+ * @param vnds volume update speed for volume down, in dB per update
+ * @param vndf volume update frequency for volume down, in sample periods per update
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setDigVolCtrl2(Vol_Freq_t vnus, Vol_Step_t vnuf, Vol_Freq_t vnds, Vol_Step_t vndf)
+{
+	uint8_t digVolCtrl2 = 0;
+
+	digVolCtrl2 |= (static_cast<uint8_t>(vnus) & 0x03) << 6;
+	digVolCtrl2 |= (static_cast<uint8_t>(vnuf) & 0x03) << 4;
+	digVolCtrl2 |= (static_cast<uint8_t>(vnds) & 0x03) << 2;
+	digVolCtrl2 |= (static_cast<uint8_t>(vndf) & 0x03) << 0;
+
+	return writeRegister(REG_DIG_VOL_CTRL2, digVolCtrl2);
+}
+
+/**
+ * @brief set the digital volume control 3
+ *
+ * @param veds emergency volume update speed for volume down, in dB per update
+ * @param vedf emergency volume update frequency for volume down, in sample periods per update
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setDigVolCtrl3(Vol_Freq_t veds, Vol_Step_t vedf)
+{
+	uint8_t digVolCtrl3 = 0;
+
+	digVolCtrl3 |= (static_cast<uint8_t>(veds) & 0x03) << 6;
+	digVolCtrl3 |= (static_cast<uint8_t>(vedf) & 0x03) << 4;
+
+	return writeRegister(REG_DIG_VOL_CTRL3, digVolCtrl3);
+}
+
+/**
  * @brief set the auto mute control
  *
  * @param bothMute true - both channels are only muted when both channels are about to be auto muted
@@ -819,6 +895,90 @@ bool TAS5827::getDspCtrl(Proc_Rate_t* p_procRate, bool* p_IramBoot, bool* p_defC
 		*p_procRate = static_cast<Proc_Rate_t>((reg & 0x18) >> 3);
 		*p_IramBoot = static_cast<bool>(reg & (1 << 1));
 		*p_defCoeff = static_cast<bool>(reg & (1 << 0));
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the digital volume left, channel 1
+ * The volume is set in -0.5 dB steps.
+ * 0 = +24.0 dB
+ * 1 = +23.5 dB
+ * ...
+ * 254 = -103 dB
+ * 255 = Mute
+ *
+ * @param p_vol pointer to return the volume in -0.5 dB steps
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getDigVolLeft(uint8_t* p_vol)
+{
+	return readRegister(REG_DIG_VOL_LEFT, p_vol);
+}
+
+/**
+ * @brief get the digital volume right, channel 2
+ * The volume is set in -0.5 dB steps.
+ * 0 = +24.0 dB
+ * 1 = +23.5 dB
+ * ...
+ * 254 = -103 dB
+ * 255 = Mute
+ *
+ * @param p_vol pointer to return the volume in -0.5 dB steps
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getDigVolRight(uint8_t* p_vol)
+{
+	return readRegister(REG_DIG_VOL_RIGHT, p_vol);
+}
+
+/**
+ * @brief get the digital volume control 2
+ *
+ * @param p_vnus pointer to return the volume update speed for volume up in Vol_Freq_t
+ * @param p_vnuf pointer to return the volume update frequency for volume up in Vol_Step_t
+ * @param p_vnds pointer to return the volume update speed for volume down in Vol_Freq_t
+ * @param p_vndf pointer to return the volume update frequency for volume down in Vol_Step_t
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getDigVolCtrl2(Vol_Freq_t* p_vnus, Vol_Step_t* p_vnuf, Vol_Freq_t* p_vnds, Vol_Step_t* p_vndf)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_DIG_VOL_CTRL2, &reg)) {
+		*p_vnus = static_cast<Vol_Freq_t>((reg & 0xC0) >> 6);
+		*p_vnuf = static_cast<Vol_Step_t>((reg & 0x30) >> 4);
+		*p_vnds = static_cast<Vol_Freq_t>((reg & 0x0C) >> 2);
+		*p_vndf = static_cast<Vol_Step_t>((reg & 0x03) >> 0);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the digital volume control 3
+ *
+ * @param p_veds pointer to return the emergency volume update speed for volume down in Vol_Freq_t
+ * @param p_vedf pointer to return the emergency volume update frequency for volume down in Vol_Step_t
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getDigVolCtrl3(Vol_Freq_t* p_veds, Vol_Step_t* p_vedf)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_DIG_VOL_CTRL3, &reg)) {
+		*p_veds = static_cast<Vol_Freq_t>((reg & 0xC0) >> 6);
+		*p_vedf = static_cast<Vol_Step_t>((reg & 0x30) >> 4);
 		return true;
 	}
 	else {

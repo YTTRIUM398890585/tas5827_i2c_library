@@ -114,6 +114,24 @@ public:
 		PROC_RATE_192KHZ = 0b11,
 	};
 
+	// Volume update frequency, in sample periods per update
+	enum class Vol_Freq_t : uint8_t
+	{
+		VOL_1_FS    = 0b00,
+		VOL_2_FS    = 0b01,
+		VOL_4_FS    = 0b10,
+		VOL_INSTANT = 0b11,
+	};
+
+	// Volume step size, in dB per update
+	enum class Vol_Step_t : uint8_t
+	{
+		VOL_4_DB   = 0b00,
+		VOL_2_DB   = 0b01,
+		VOL_1_DB   = 0b10,
+		VOL_0_5_DB = 0b11,
+	};
+
 	// closed loop bandwidth
 	enum class Loop_BW_t : uint8_t
 	{
@@ -174,7 +192,7 @@ public:
 		// 3'b011: SS range +/- 6.67%
 		// 3'b100: SS range +/- 14.29%
 		// 3'b101: SS range +/- 29.52%
-		// not sure what the setting actuall means outside of the given example in the datasheet
+		// NOTE: not sure what the setting actuall means outside of the given example in the datasheet
 		SS_Rand_1 = 0b000,
 		SS_Rand_2 = 0b010,
 		SS_Rand_3 = 0b011,
@@ -255,7 +273,6 @@ public:
 	const uint8_t EN_OTSD_AUTOREC = 1 << 4;
 
 	TAS5827();
-	~TAS5827();
 
 	bool begin(uint8_t address, uint8_t DUMMY_I2C_HANDLE);
 
@@ -273,6 +290,11 @@ public:
 	bool setSapCtrl2(uint8_t i2sShiftLsb);
 	bool setDspPgmMode(bool ch1HiZ, bool ch2HiZ, bool romMode);
 	bool setDspCtrl(Proc_Rate_t procRate, bool IramBoot, bool defCoeff);
+	bool setDigVolLeft(uint8_t vol);
+	bool setDigVolRight(uint8_t vol);
+	// NOTE: mistake in the datasheet, the datasheet flipped up and down so no idea what is correct
+	bool setDigVolCtrl2(Vol_Freq_t vnus, Vol_Step_t vnuf, Vol_Freq_t vnds, Vol_Step_t vndf);
+	bool setDigVolCtrl3(Vol_Freq_t veds, Vol_Step_t vedf);
 	bool setAutoMuteCtrl(bool bothMute, bool ch1Mute, bool ch2Mute);
 	bool setAutoMuteTime(Auto_Mute_Time_t ch1Time, Auto_Mute_Time_t ch2Time);
 	bool setLoopBW(Loop_BW_t loopBW);
@@ -306,6 +328,11 @@ public:
 	);
 	bool getDspPgmMode(bool* p_ch1HiZ, bool* p_ch2HiZ, bool* p_romMode);
 	bool getDspCtrl(Proc_Rate_t* p_procRate, bool* p_IramBoot, bool* p_defCoeff);
+	bool getDigVolLeft(uint8_t* p_vol);
+	bool getDigVolRight(uint8_t* p_vol);
+	// NOTE: mistake in the datasheet, the datasheet flipped up and down so no idea what is correct
+	bool getDigVolCtrl2(Vol_Freq_t* p_vnus, Vol_Step_t* p_vnuf, Vol_Freq_t* p_vnds, Vol_Step_t* p_vndf);
+	bool getDigVolCtrl3(Vol_Freq_t* p_eds, Vol_Step_t* p_edf);
 	bool getAutoMuteCtrl(bool* p_bothMute, bool* p_ch1Mute, bool* p_ch2Mute);
 	bool getAutoMuteTime(Auto_Mute_Time_t* p_ch1Time, Auto_Mute_Time_t* p_ch2Time);
 	bool getLoopBW(Loop_BW_t* p_loopBW);
