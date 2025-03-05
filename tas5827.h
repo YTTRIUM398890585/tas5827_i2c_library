@@ -104,6 +104,16 @@ public:
 		FS_192_KHZ = 0b1101,
 	};
 
+	// Processing rate
+	// NOTE: im guessing PROC_RATE is processing rate, but the datasheet does not specify what it is
+	enum class Proc_Rate_t : uint8_t
+	{
+		PROC_RATE_INPUT  = 0b00,
+		PROC_RATE_48KHZ  = 0b01,
+		PROC_RATE_96KHZ  = 0b10,
+		PROC_RATE_192KHZ = 0b11,
+	};
+
 	// closed loop bandwidth
 	enum class Loop_BW_t : uint8_t
 	{
@@ -262,6 +272,7 @@ public:
 	bool setSapCtrl1(uint8_t i2sShiftMsb, Format_t i2sFormat, bool lrclkPulseWidth, Bit_Depth_t i2sBitDepth);
 	bool setSapCtrl2(uint8_t i2sShiftLsb);
 	bool setDspPgmMode(bool ch1HiZ, bool ch2HiZ, bool romMode);
+	bool setDspCtrl(Proc_Rate_t procRate, bool IramBoot, bool defCoeff);
 	bool setAutoMuteCtrl(bool bothMute, bool ch1Mute, bool ch2Mute);
 	bool setAutoMuteTime(Auto_Mute_Time_t ch1Time, Auto_Mute_Time_t ch2Time);
 	bool setLoopBW(Loop_BW_t loopBW);
@@ -294,6 +305,7 @@ public:
 		bool* p_bclkOverRate, bool* p_pllOverRate, bool* p_pllLocked, bool* p_bclkMissing, bool* p_blckValid, bool* p_fsValid
 	);
 	bool getDspPgmMode(bool* p_ch1HiZ, bool* p_ch2HiZ, bool* p_romMode);
+	bool getDspCtrl(Proc_Rate_t* p_procRate, bool* p_IramBoot, bool* p_defCoeff);
 	bool getAutoMuteCtrl(bool* p_bothMute, bool* p_ch1Mute, bool* p_ch2Mute);
 	bool getAutoMuteTime(Auto_Mute_Time_t* p_ch1Time, Auto_Mute_Time_t* p_ch2Time);
 	bool getLoopBW(Loop_BW_t* p_loopBW);

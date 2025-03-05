@@ -237,6 +237,26 @@ bool TAS5827::setDspPgmMode(bool ch1HiZ, bool ch2HiZ, bool romMode)
 }
 
 /**
+ * @brief set the DSP control
+ *
+ * @param procRate processing rate
+ * @param IramBoot true - boot from IRAM, false - boot from IROM
+ * @param defCoeff true - use default coefficients from ZROM, false - use custom coefficients
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::setDspCtrl(Proc_Rate_t procRate, bool IramBoot, bool defCoeff)
+{
+	uint8_t dspCtrl = 0;
+
+	dspCtrl |= (static_cast<uint8_t>(procRate) & 0x03) << 3;
+	dspCtrl |= IramBoot ? (1 << 1) : 0;
+	dspCtrl |= defCoeff ? (1 << 0) : 0;
+
+	return writeRegister(REG_DSP_CTRL, dspCtrl);
+}
+
+/**
  * @brief set the auto mute control
  *
  * @param bothMute true - both channels are only muted when both channels are about to be auto muted
@@ -774,6 +794,31 @@ bool TAS5827::getDspPgmMode(bool* p_ch1HiZ, bool* p_ch2HiZ, bool* p_romMode)
 		*p_ch1HiZ  = static_cast<bool>(reg & (1 << 3));
 		*p_ch2HiZ  = static_cast<bool>(reg & (1 << 2));
 		*p_romMode = static_cast<bool>(reg & (1 << 0));
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/**
+ * @brief get the DSP control
+ *
+ * @param p_procRate pointer to return the processing rate in Proc_Rate_t
+ * @param p_IramBoot pointer to return if the boot is from IRAM, true = boot from IRAM, false = boot from IROM
+ * @param p_defCoeff pointer to return if the default coefficients from ZROM are used, true = use default coefficients from ZROM,
+ * false = use custom coefficients
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::getDspCtrl(Proc_Rate_t* p_procRate, bool* p_IramBoot, bool* p_defCoeff)
+{
+	uint8_t reg;
+
+	if (readRegister(REG_DSP_CTRL, &reg)) {
+		*p_procRate = static_cast<Proc_Rate_t>((reg & 0x18) >> 3);
+		*p_IramBoot = static_cast<bool>(reg & (1 << 1));
+		*p_defCoeff = static_cast<bool>(reg & (1 << 0));
 		return true;
 	}
 	else {
